@@ -20,6 +20,6 @@ hooks:
     preprovision:
         posix:
         shell: sh
-        run: ./scripts/download-asa-multitenant.sh 1.0.2
+        run: ./scripts/download-asa-multitenant.sh --branch main
         interactive: true
         continueOnError: false
