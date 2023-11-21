@@ -5,13 +5,10 @@
     "environmentName": {
       "value": "${AZURE_ENV_NAME}"
     },
-    "resourceGroupName": {
-      "value": "${AZURE_RESOURCE_GROUP}"
-    },
     "location": {
       "value": "${AZURE_LOCATION}"
     },
-    "principalId": {
+    "userPrincipalId": {
       "value": "${AZURE_PRINCIPAL_ID}"
     },
     "openAiServiceName": {
@@ -96,10 +93,7 @@
       "value": "${ALLOWED_ORIGIN}"
     },
 
-
-    "workloadName" : {
-      "value": "appsvclza1"         
-   },
+   
    "lzaEnvironmentName": {
        "value": "${AZURE_LZA_ENV_NAME=dev}"
    },
@@ -116,7 +110,7 @@
        "value": true
    },
    "deployJumpHost": {
-       "value": false
+       "value": true
    },
    "subnetHubFirewallAddressSpace": {
        "value": "10.242.0.0/26"
@@ -141,7 +135,7 @@
    },
    "webAppBaseOs" : 
    {
-       "value": "Windows"
+       "value": "Linux"
    },
    "adminUsername": {
        "value": "azureuser"

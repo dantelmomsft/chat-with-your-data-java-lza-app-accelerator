@@ -1,9 +1,6 @@
 targetScope = 'subscription'
 
 
-// ================ //
-// App Parameters   //
-// ================ //
 
 @minLength(1)
 @maxLength(64)
@@ -14,10 +11,10 @@ param environmentName string
 @description('Primary location for all resources')
 param location string
 
-param appServicePlanName string = ''
-param backendServiceName string = ''
-param resourceGroupName string = ''
 
+// ================ //
+// App Parameters   //
+// ================ //
 param applicationInsightsDashboardName string = ''
 param applicationInsightsName string = ''
 param logAnalyticsName string = ''
@@ -38,24 +35,6 @@ param storageResourceGroupLocation string = location
 param storageContainerName string = 'content'
 param storageSkuName string // Set in main.parameters.json
 
-@allowed(['azure', 'openai'])
-param openAiHost string // Set in main.parameters.json
-
-param openAiServiceName string = ''
-param openAiResourceGroupName string = ''
-@description('Location for the OpenAI resource group')
-@allowed(['canadaeast', 'eastus', 'eastus2', 'francecentral', 'switzerlandnorth', 'uksouth', 'japaneast', 'northcentralus', 'australiaeast', 'swedencentral'])
-@metadata({
-  azd: {
-    type: 'location'
-  }
-})
-param openAiResourceGroupLocation string
-
-param openAiSkuName string = 'S0'
-
-param openAiApiKey string = ''
-param openAiApiOrganization string = ''
 
 param formRecognizerServiceName string = ''
 param formRecognizerResourceGroupName string = ''
@@ -65,7 +44,7 @@ param formRecognizerSkuName string = 'S0'
 
 param chatGptDeploymentName string // Set in main.parameters.json
 param chatGptDeploymentCapacity int = 30
-param chatGptModelName string = (openAiHost == 'azure') ? 'gpt-35-turbo' : 'gpt-3.5-turbo'
+param chatGptModelName string = 'gpt-35-turbo'
 param chatGptModelVersion string = '0613'
 param embeddingDeploymentName string // Set in main.parameters.json
 param embeddingDeploymentCapacity int = 30
@@ -82,23 +61,17 @@ param clientAppId string = ''
 param allowedOrigin string = '' // should start with https://, shouldn't end with a /
 
 @description('Id of the user or app to assign application roles')
-param principalId string = ''
-
-@description('Use Application Insights for monitoring and performance tracing')
-param useApplicationInsights bool = false
+param userPrincipalId string = ''
 
 
 
 // ====================================== //
 // App Service Landing Zones Parameters   //
 // ===================================== //
-@maxLength(10)
-@description('suffix (max 10 characters long) that will be used to name the resources in a pattern like <resourceAbbreviation>-<workloadName>')
-param workloadName string =  'appsvc${ take( uniqueString( subscription().id), 4) }'
 
 @description('Required. The name of the environmentName (e.g. "dev", "test", "prod", "preprod", "staging", "uat", "dr", "qa"). Up to 8 characters long.')
 @maxLength(8)
-param lzaEnvironmentName string = 'test'
+param lzaEnvironmentName string = 'azd'
 
 @description('CIDR of the HUB vnet i.e. 192.168.0.0/24 - optional if you want to use an existing hub vnet (vnetHubResourceId)')
 param vnetHubAddressSpace string = '10.242.0.0/20'
@@ -139,7 +112,7 @@ param webAppPlanSku string = 'S1'
 
 @description('Kind of server OS of the App Service Plan')
 @allowed([ 'Windows', 'Linux'])
-param webAppBaseOs string = 'Windows'
+param webAppBaseOs string = 'Linux'
 
 @description('mandatory, the username of the admin user of the jumpbox VM')
 param adminUsername string = 'azureuser'
@@ -148,45 +121,25 @@ param adminUsername string = 'azureuser'
 @secure()
 param adminPassword string
 
-@description('Conditional. The Azure Active Directory (AAD) administrator authentication. Required if no `sqlAdminLogin` & `sqlAdminPassword` is provided.')
-param sqlServerAdministrators object = {}
-
-@description('Conditional. If sqlServerAdministrators is given, this is not required. ')
-param sqlAdminLogin string = 'sqluser'
-
-@description('Conditional. If sqlServerAdministrators is given, this is not required -check password policy: https://learn.microsoft.com/en-us/sql/relational-databases/security/password-policy?view=azuresqldb-current')
-@secure()
-param sqlAdminPassword string = newGuid()
-
 
 @description('set to true if you want to deploy a jumpbox/devops VM')
 param deployJumpHost bool = true
 
-// post deployment specific parameters for the jumpBox
-@description('The URL of the Github repository to use for the Github Actions Runner. This parameter is optional. If not provided, the Github Actions Runner will not be installed. If this parameter is provided, then github_token must also be provided.')
-param githubRepository string = '' 
 
-@description('The token to use for the Github Actions Runner. This parameter is optional. If not provided, the Github Actions Runner will not be installed. If this parameter is provided, then github_repository must also be provided.')
-param githubToken string = '' 
-
-@description('The URL of the Azure DevOps organization to use for the Azure DevOps Agent. This parameter is optional. If not provided, the Github Azure DevOps will not be installed. If this parameter is provided, then ado_token must also be provided.')
-param adoOrganization string = '' 
-
-@description('The PAT token to use for the Azure DevOps Agent. This parameter is optional. If not provided, the Github Azure DevOps will not be installed. If this parameter is provided, then ado_organization must also be provided.')
-param adoToken string = '' 
-
-
+//adding azd tags so app service instance deployed by the LZA is discovered during azd deploy phase
 var tags = union({
   'azd-env-name': environmentName
+  'azd-service-name': 'backend' 
 }, resourceTags)
 
 
+//Using the azd enviroment name as the workload name. For the LZA enviroment concept (which is different from the azd env concept) I'm using the static string 'azd
 module appServiceLza 'appservice-landing-zone-accelerator/scenarios/secure-baseline-multitenant/bicep/main.bicep' = {
   name: 'app-service-lza'
   params: {
     location: location
     workloadName: environmentName
-    environmentName: 'azd'
+    environmentName: lzaEnvironmentName
     numericSuffix: numericSuffix
     resourceTags: tags
     vnetHubAddressSpace: vnetHubAddressSpace
@@ -200,34 +153,37 @@ module appServiceLza 'appservice-landing-zone-accelerator/scenarios/secure-basel
     firewallInternalIp: firewallInternalIp
     webAppPlanSku: webAppPlanSku
     webAppBaseOs: webAppBaseOs
+    linuxFxVersion:'JAVA|17-java17'
     adminUsername: adminUsername
     adminPassword: adminPassword
-    sqlServerAdministrators: sqlServerAdministrators
-    sqlAdminLogin: sqlAdminLogin
-    sqlAdminPassword: sqlAdminPassword
     enableEgressLockdown: false
-    deployRedis: false
-    deployAzureSql: false
-    deployAppConfig: false
+    deployOpenAi: true
     deployJumpHost: deployJumpHost
-    githubRepository: githubRepository
-    githubToken: githubToken
-    adoOrganization: adoOrganization
-    adoToken: adoToken
-    installClis: false
+    installClis: true
     installSsms: false
     autoApproveAfdPrivateEndpoint: false
 
   }
 }
 
-/*
+/**this is an hack which is somehow tight coupling the app biceps with the asa LZA internal implementation. 
+* You can't use the spokeresourcename as output of a module. it needs to be known at compile time. See https://github.com/Azure/bicep/issues/4992
+**/
+
+
+var spokeResourceGroupName = 'rg-spoke-${environmentName}-${lzaEnvironmentName}-${location}'
+var openAIAccountName = appServiceLza.outputs.openAIAccountName
+var appServiceIdentityPrincipalId = appServiceLza.outputs.webappUserIdentityAssignedPrincipalId
+
+
 module appSupportingServices 'app-supporting-services/app-supporting-services-main.bicep' = {
   name: 'app-supporting-services'
+  scope: resourceGroup(spokeResourceGroupName)
   params: {
+    appServiceIdentityPrincipalId:appServiceIdentityPrincipalId
+    userPrincipalId:userPrincipalId
     environmentName: environmentName
     location: location
-    resourceGroupName: resourceGroupName
     applicationInsightsDashboardName: applicationInsightsDashboardName
     applicationInsightsName: applicationInsightsName
     logAnalyticsName: logAnalyticsName
@@ -243,13 +199,7 @@ module appSupportingServices 'app-supporting-services/app-supporting-services-ma
     storageResourceGroupLocation: storageResourceGroupLocation
     storageContainerName: storageContainerName
     storageSkuName: storageSkuName
-    openAiHost: openAiHost
-    openAiServiceName: openAiServiceName
-    openAiResourceGroupName: openAiResourceGroupName
-    openAiResourceGroupLocation: openAiResourceGroupLocation
-    openAiSkuName: openAiSkuName
-    openAiApiKey: openAiApiKey
-    openAiApiOrganization: openAiApiOrganization
+    openAIAccountName: openAIAccountName
     formRecognizerServiceName: formRecognizerServiceName
     formRecognizerResourceGroupName: formRecognizerResourceGroupName
     formRecognizerResourceGroupLocation: formRecognizerResourceGroupLocation
@@ -266,8 +216,35 @@ module appSupportingServices 'app-supporting-services/app-supporting-services-ma
     serverAppSecret: serverAppSecret
     clientAppId: clientAppId
     allowedOrigin: allowedOrigin
-    useApplicationInsights: useApplicationInsights
   }
+  dependsOn: [
+    appServiceLza
+  ]
 }
-*/
 
+
+output AZURE_RESOURCE_GROUP string = spokeResourceGroupName
+
+// Shared by all OpenAI deployments
+output OPENAI_HOST string = 'azure'
+output AZURE_OPENAI_EMB_MODEL_NAME string = embeddingModelName
+output AZURE_OPENAI_CHATGPT_MODEL string = chatGptModelName
+// Specific to Azure OpenAI
+output AZURE_OPENAI_SERVICE string = openAIAccountName
+output AZURE_OPENAI_RESOURCE_GROUP string = spokeResourceGroupName
+output AZURE_OPENAI_CHATGPT_DEPLOYMENT string =  chatGptDeploymentName
+output AZURE_OPENAI_EMB_DEPLOYMENT string = embeddingDeploymentName
+
+
+output AZURE_FORMRECOGNIZER_SERVICE string = appSupportingServices.outputs.formRecognizerService
+output AZURE_FORMRECOGNIZER_RESOURCE_GROUP string = spokeResourceGroupName
+
+output AZURE_SEARCH_INDEX string = searchIndexName
+output AZURE_SEARCH_SERVICE string = appSupportingServices.outputs.azureSearchService
+output AZURE_SEARCH_SERVICE_RESOURCE_GROUP string = spokeResourceGroupName
+
+output AZURE_STORAGE_ACCOUNT string = appSupportingServices.outputs.azureStorageAccount
+output AZURE_STORAGE_CONTAINER string = storageContainerName
+output AZURE_STORAGE_RESOURCE_GROUP string = spokeResourceGroupName
+
+output BACKEND_URI string = appServiceLza.outputs.webAppHostName
