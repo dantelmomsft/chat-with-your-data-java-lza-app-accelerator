@@ -15,12 +15,12 @@ services:
      prepackage:
         posix:
           shell: sh
-          run:  cd ../../app/src/azure-search-openai-demo-java/app/frontend; npm install;npm run build
+          run:  cd ../frontend; npm install;npm run build
           interactive: true
           continueOnError: false
         windows:
           shell: pwsh
-          run:  cd ../../app/src/azure-search-openai-demo-java/app/frontend; npm install;npm run build
+          run:  cd ../frontend; npm install;npm run build
           interactive: true
           continueOnError: false
 hooks:
