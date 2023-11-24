@@ -1,10 +1,19 @@
 targetScope = 'resourceGroup'
 
-@description('Name of the Azure Open AI Instance created by the LZA accelerator')
+@description('Name of the Azure Open AI nstance created by the LZA accelerator')
 param openAIAccountName string = ''
 
 @description('ID of the App Service identity principal id created by the LZA accelerator')
 param appServiceIdentityPrincipalId string
+
+@description('ID of the App Service identity client id created by the LZA accelerator')
+param appServiceIdentityClientId string
+
+@description('Name of the App Service instance created by the LZA accelerator')
+param appServiceName string
+
+@description(' tags required by azd so that the service is discovered by deploy phase')
+param azdServiceTags object = {}
 
 @minLength(1)
 @maxLength(64)
@@ -16,13 +25,8 @@ param environmentName string
 param location string
 
 
-
-param applicationInsightsDashboardName string = ''
-param applicationInsightsName string = ''
-param logAnalyticsName string = ''
-
 param searchServiceName string = ''
-param searchServiceResourceGroupName string = ''
+
 param searchServiceLocation string = ''
 // The free tier does not support managed identity (required) or semantic search (optional)
 @allowed(['basic', 'standard', 'standard2', 'standard3', 'storage_optimized_l1', 'storage_optimized_l2'])
@@ -32,7 +36,6 @@ param searchQueryLanguage string // Set in main.parameters.json
 param searchQuerySpeller string // Set in main.parameters.json
 
 param storageAccountName string = ''
-param storageResourceGroupName string = ''
 param storageResourceGroupLocation string = location
 param storageContainerName string = 'content'
 param storageSkuName string // Set in main.parameters.json
@@ -41,8 +44,7 @@ param storageSkuName string // Set in main.parameters.json
 
 
 param formRecognizerServiceName string = ''
-param formRecognizerResourceGroupName string = ''
-param formRecognizerResourceGroupLocation string = location
+
 
 param formRecognizerSkuName string = 'S0'
 
@@ -73,118 +75,9 @@ var resourceToken = toLower(uniqueString(subscription().id, environmentName, loc
 var tags = { 'azd-env-name': environmentName }
 
 
-
-
-/*
-
-resource openAiResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(openAiResourceGroupName)) {
-  name: !empty(openAiResourceGroupName) ? openAiResourceGroupName : resourceGroup.name
-}
-
-resource formRecognizerResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(formRecognizerResourceGroupName)) {
-  name: !empty(formRecognizerResourceGroupName) ? formRecognizerResourceGroupName : resourceGroup.name
-}
-
-resource searchServiceResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(searchServiceResourceGroupName)) {
-  name: !empty(searchServiceResourceGroupName) ? searchServiceResourceGroupName : resourceGroup.name
-}
-
-resource storageResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(storageResourceGroupName)) {
-  name: !empty(storageResourceGroupName) ? storageResourceGroupName : resourceGroup.name
-}
-
-*/
-
-/*
-// Monitor application with Azure Monitor
-module monitoring './core/monitor/monitoring.bicep' = if (useApplicationInsights) {
-  name: 'monitoring'
-  scope: resourceGroup
-  params: {
-    location: location
-    tags: tags
-    applicationInsightsName: !empty(applicationInsightsName) ? applicationInsightsName : '${abbrs.insightsComponents}${resourceToken}'
-    applicationInsightsDashboardName: !empty(applicationInsightsDashboardName) ? applicationInsightsDashboardName : '${abbrs.portalDashboards}${resourceToken}'
-    logAnalyticsName: !empty(logAnalyticsName) ? logAnalyticsName : '${abbrs.operationalInsightsWorkspaces}${resourceToken}'
-  }
-}
-*/
-
-
-/*
-
-// Create an App Service Plan to group applications under the same payment plan and SKU
-module appServicePlan 'core/host/appserviceplan.bicep' = {
-  name: 'appserviceplan'
-  scope: resourceGroup
-  params: {
-    name: !empty(appServicePlanName) ? appServicePlanName : '${abbrs.webServerFarms}${resourceToken}'
-    location: location
-    tags: tags
-    sku: {
-      name: 'B1'
-      capacity: 1
-    }
-    kind: 'linux'
-  }
-}
-
-
-
-
-
-// The application frontend
-module backend 'core/host/appservice.bicep' = {
-  name: 'web'
-  scope: resourceGroup
-  params: {
-    name: !empty(backendServiceName) ? backendServiceName : '${abbrs.webSitesAppService}backend-${resourceToken}'
-    location: location
-    tags: union(tags, { 'azd-service-name': 'backend' })
-    appServicePlanId: appServicePlan.outputs.id
-    runtimeName: 'python'
-    runtimeVersion: '3.11'
-    appCommandLine: 'python3 -m gunicorn main:app'
-    scmDoBuildDuringDeployment: true
-    managedIdentity: true
-    allowedOrigins: [allowedOrigin]
-    
-    appSettings: {
-      AZURE_STORAGE_ACCOUNT: storage.outputs.name
-      AZURE_STORAGE_CONTAINER: storageContainerName
-      AZURE_SEARCH_INDEX: searchIndexName
-      AZURE_SEARCH_SERVICE: searchService.outputs.name
-      AZURE_SEARCH_QUERY_LANGUAGE: searchQueryLanguage
-      AZURE_SEARCH_QUERY_SPELLER: searchQuerySpeller
-      APPLICATIONINSIGHTS_CONNECTION_STRING: useApplicationInsights ? monitoring.outputs.applicationInsightsConnectionString : ''
-      // Shared by all OpenAI deployments
-      OPENAI_HOST: openAiHost
-      AZURE_OPENAI_EMB_MODEL_NAME: embeddingModelName
-      AZURE_OPENAI_CHATGPT_MODEL: chatGptModelName
-      // Specific to Azure OpenAI
-      AZURE_OPENAI_SERVICE: openAiHost == 'azure' ? openAi.outputs.name : ''
-      AZURE_OPENAI_CHATGPT_DEPLOYMENT: chatGptDeploymentName
-      AZURE_OPENAI_EMB_DEPLOYMENT: embeddingDeploymentName
-      // Used only with non-Azure OpenAI deployments
-      OPENAI_API_KEY: openAiApiKey
-      OPENAI_ORGANIZATION: openAiApiOrganization
-      // Optional login and document level access control system
-      AZURE_USE_AUTHENTICATION: useAuthentication
-      AZURE_SERVER_APP_ID: serverAppId
-      AZURE_SERVER_APP_SECRET: serverAppSecret
-      AZURE_CLIENT_APP_ID: clientAppId
-      AZURE_TENANT_ID: tenant().tenantId
-      // CORS support, for frontends on other hosts
-      ALLOWED_ORIGIN: allowedOrigin
-    } 
-  }
-}
-
-*/
-
-
-module openAi 'ai/cognitiveservices.bicep' =  {
-  name: 'openai'
+//Add model deployments to the existing OpenAI account created by the LZA accelerator
+module openAIModelsDeployment 'ai/cognitiveservices.bicep' =  {
+  name: 'openai-models-deployment'
   params: {
     name: openAIAccountName
     deployments: [
@@ -275,14 +168,74 @@ module storage 'storage/storage-account.bicep' = {
 }
 
 
-resource openAILZA 'Microsoft.CognitiveServices/accounts@2023-05-01' existing = {
+resource appService 'Microsoft.Web/sites@2022-03-01' existing = {
+  name: appServiceName
+}
+
+
+
+var existingTags = appService.tags
+
+resource extendAppServiceTags 'Microsoft.Resources/tags@2022-09-01' = {
+  name: 'default'
+  scope: appService
+  properties: {
+    tags: union(existingTags, azdServiceTags)
+  }
+}
+
+
+  
+//Add the sample required java app settings to the existing App Service created by the LZA accelerator
+var appServiceSettingsName = '${appService.id}/config/appsettings'
+var currentAppSettings = list(appServiceSettingsName, '2020-12-01').properties
+
+var newAppSettings = {
+  AZURE_STORAGE_ACCOUNT: storage.outputs.name
+  AZURE_STORAGE_CONTAINER: storageContainerName
+  AZURE_SEARCH_INDEX: searchIndexName
+  AZURE_SEARCH_SERVICE: searchService.outputs.name
+  AZURE_SEARCH_QUERY_LANGUAGE: searchQueryLanguage
+  AZURE_SEARCH_QUERY_SPELLER: searchQuerySpeller
+  AZURE_OPENAI_EMB_MODEL_NAME: embeddingModelName
+  AZURE_OPENAI_CHATGPT_MODEL: chatGptModelName
+  // Specific to Azure OpenAI
+  AZURE_OPENAI_SERVICE: openAIAccountName
+  AZURE_OPENAI_CHATGPT_DEPLOYMENT: chatGptDeploymentName
+  AZURE_OPENAI_EMB_DEPLOYMENT: embeddingDeploymentName
+
+  // Optional login and document level access control system
+  AZURE_USE_AUTHENTICATION: useAuthentication
+  AZURE_SERVER_APP_ID: serverAppId
+  AZURE_SERVER_APP_SECRET: serverAppSecret
+  AZURE_CLIENT_APP_ID: clientAppId
+  AZURE_TENANT_ID: tenant().tenantId
+  // CORS support, for frontends on other hosts
+  ALLOWED_ORIGIN: allowedOrigin
+
+  //APP INSIGHTS FOR JAVA
+  XDT_MicrosoftApplicationInsights_Java: '1'
+
+  //SETUP the use of user assigned managed identity
+  AZURE_CLIENT_ID: appServiceIdentityClientId
+}
+
+
+
+module expandedAppSettings 'host/appservice-appsettings.bicep' = {
+  name: 'expandedAppSettings'
+  params: {
+    name: appServiceName
+    appSettings: union(currentAppSettings,newAppSettings)
+  }
+}
+
+
+resource existingOpenAI 'Microsoft.CognitiveServices/accounts@2023-05-01' existing = {
   name: openAIAccountName
 }
 
 // USER ROLES assignment required to run the data ingestion process during post-provision hook
-
-
-
 //TODO Refactor the role.bicep in order to accept the scope parameter
 resource openAiRoleUser 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid(subscription().id, resourceGroup().id, userPrincipalId, '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd')
@@ -291,7 +244,7 @@ resource openAiRoleUser 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
     principalType: 'User'
     roleDefinitionId: resourceId('Microsoft.Authorization/roleDefinitions','5e0bd9bd-7b93-4f28-af87-19fc36ad61bd')
   }
-  scope:openAILZA
+  scope:existingOpenAI
 }
 
 
@@ -352,8 +305,6 @@ module searchSvcContribRoleUser 'security/role.bicep' = {
 
 
 // SYSTEM IDENTITIES required by the application at runtime
-
-
 //TODO Refactor the role.bicep in order to accept the scope parameter
 resource role 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid(subscription().id, resourceGroup().id, appServiceIdentityPrincipalId, '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd')
@@ -362,7 +313,7 @@ resource role 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
     principalType: 'ServicePrincipal'
     roleDefinitionId: resourceId('Microsoft.Authorization/roleDefinitions','5e0bd9bd-7b93-4f28-af87-19fc36ad61bd')
   }
-  scope:openAILZA
+  scope:existingOpenAI
 }
 
 //TODO Assign roles to appServiceManagedIdentityId for Azure AI search and storage
@@ -385,38 +336,6 @@ module searchRoleBackend 'security/role.bicep' = {
 }
 
 
-/*
-output AZURE_LOCATION string = location
-output AZURE_TENANT_ID string = tenant().tenantId
-output AZURE_RESOURCE_GROUP string = resourceGroup.name
-*/
-/*
-// Shared by all OpenAI deployments
-output OPENAI_HOST string = openAiHost
-output AZURE_OPENAI_EMB_MODEL_NAME string = embeddingModelName
-output AZURE_OPENAI_CHATGPT_MODEL string = chatGptModelName
-// Specific to Azure OpenAI
-output AZURE_OPENAI_SERVICE string = (openAiHost == 'azure') ? openAi.outputs.name : ''
-output AZURE_OPENAI_RESOURCE_GROUP string = (openAiHost == 'azure') ? openAiResourceGroup.name : ''
-output AZURE_OPENAI_CHATGPT_DEPLOYMENT string = (openAiHost == 'azure') ? chatGptDeploymentName : ''
-output AZURE_OPENAI_EMB_DEPLOYMENT string = (openAiHost == 'azure') ? embeddingDeploymentName : ''
-// Used only with non-Azure OpenAI deployments
-output OPENAI_API_KEY string = (openAiHost == 'openai') ? openAiApiKey : ''
-output OPENAI_ORGANIZATION string = (openAiHost == 'openai') ? openAiApiOrganization : ''
-
-output AZURE_FORMRECOGNIZER_SERVICE string = formRecognizer.outputs.name
-output AZURE_FORMRECOGNIZER_RESOURCE_GROUP string = formRecognizerResourceGroup.name
-
-output AZURE_SEARCH_INDEX string = searchIndexName
-output AZURE_SEARCH_SERVICE string = searchService.outputs.name
-output AZURE_SEARCH_SERVICE_RESOURCE_GROUP string = searchServiceResourceGroup.name
-
-output AZURE_STORAGE_ACCOUNT string = storage.outputs.name
-output AZURE_STORAGE_CONTAINER string = storageContainerName
-output AZURE_STORAGE_RESOURCE_GROUP string = storageResourceGroup.name
-
-output BACKEND_URI string = backend.outputs.uri
-*/
 
 output formRecognizerService string = documentIntelligence.name
 output formRecognizerResourceGroup string = resourceGroup().name

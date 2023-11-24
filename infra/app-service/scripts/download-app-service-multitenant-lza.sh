@@ -19,8 +19,8 @@
 
 
 
-if [ ! -d './infra/appservice-landing-zone-accelerator' ]; then
-    cd infra
+if [ ! -d './bicep/lza-libs/appservice-landing-zone-accelerator' ]; then
+    cd bicep/lza-libs
     if [ ! -z $tag ]; then
         echo "Downloading App Service Multitenant Secure Scenario from tag: https://github.com/Azure/appservice-landing-zone-accelerator/archive/refs/tags/v$tag.tar.gz"
         curl -LJ https://github.com/Azure/appservice-landing-zone-accelerator/archive/refs/tags/v$tag.tar.gz -o appservice-landing-zone-accelerator.tar.gz
@@ -51,7 +51,7 @@ if [ ! -d './infra/appservice-landing-zone-accelerator' ]; then
     
     # Remove the downloaded file
     rm appservice-landing-zone-accelerator.tar.gz   
-    cd ..
+    cd ../..
 else
     echo "App Service Multitenant Secure Scenario already downloaded"
 fi

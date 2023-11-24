@@ -19,8 +19,8 @@
 
 
 
-if [ ! -d './src/azure-search-openai-demo-java' ]; then
-    cd src
+if [ ! -d './app/src/azure-search-openai-demo-java' ]; then
+    cd app/src
     if [ ! -z $tag ]; then
         echo "Downloading Chat With Your Data - Java source code from tag: https://github.com/Azure-Samples/azure-search-openai-demo-java/archive/refs/tags/v$tag.tar.gz"
         curl -LJ https://github.com/Azure-Samples/azure-search-openai-demo-java/archive/refs/tags/v$tag.tar.gz -o azure-search-openai-demo-java.tar.gz
@@ -53,7 +53,7 @@ if [ ! -d './src/azure-search-openai-demo-java' ]; then
     
     # Remove the downloaded file
     rm azure-search-openai-demo-java.tar.gz 
-    cd ..
+    cd ../..
 else
     echo "Chat With Your Data - Java source code already downloaded"
 fi

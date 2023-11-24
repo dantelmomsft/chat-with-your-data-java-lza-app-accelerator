@@ -1,0 +1,48 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
+
+name: chat-with-your-data-java-lza-app-accelerator
+metadata:
+  template: chat-with-your-data-java-lza-app-accelerator@0.0.1-snapshot
+infra:
+  path: bicep
+  module: chat-with-your-data-java-main
+services:
+  backend:
+    project: ../../app/src/azure-search-openai-demo-java/app/backend
+    language: java
+    host: appservice
+    hooks:
+     prepackage:
+        posix:
+          shell: sh
+          run:  cd ../../app/src/azure-search-openai-demo-java/app/frontend; npm install;npm run build
+          interactive: true
+          continueOnError: false
+        windows:
+          shell: pwsh
+          run:  cd ../../app/src/azure-search-openai-demo-java/app/frontend; npm install;npm run build
+          interactive: true
+          continueOnError: false
+hooks:
+    preprovision:
+        posix:
+          shell: sh
+          run: ./scripts/download-app-service-multitenant-lza.sh --branch feature/external-outputs
+          interactive: true
+          continueOnError: false
+        windows:
+          shell: pwsh
+          run: ./scripts/download-app-service-multitenant-lza.ps1 -branch feature/external-outputs
+          interactive: true
+          continueOnError: false 
+    postrestore:
+        windows:
+          shell: pwsh
+          run: cd ../../app/src/azure-search-openai-demo-java/; ./scripts/prepdocs.ps1; cd ../..
+          interactive: true
+          continueOnError: false
+        posix:
+          shell: sh
+          run: cd ../../app/src/azure-search-openai-demo-java/; ./scripts/prepdocs.sh; cd ../..
+          interactive: true
+          continueOnError: false

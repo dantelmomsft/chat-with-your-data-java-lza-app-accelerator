@@ -15,12 +15,9 @@ param location string
 // ================ //
 // App Parameters   //
 // ================ //
-param applicationInsightsDashboardName string = ''
-param applicationInsightsName string = ''
-param logAnalyticsName string = ''
+
 
 param searchServiceName string = ''
-param searchServiceResourceGroupName string = ''
 param searchServiceLocation string = ''
 // The free tier does not support managed identity (required) or semantic search (optional)
 @allowed(['basic', 'standard', 'standard2', 'standard3', 'storage_optimized_l1', 'storage_optimized_l2'])
@@ -30,15 +27,13 @@ param searchQueryLanguage string // Set in main.parameters.json
 param searchQuerySpeller string // Set in main.parameters.json
 
 param storageAccountName string = ''
-param storageResourceGroupName string = ''
 param storageResourceGroupLocation string = location
 param storageContainerName string = 'content'
 param storageSkuName string // Set in main.parameters.json
 
 
 param formRecognizerServiceName string = ''
-param formRecognizerResourceGroupName string = ''
-param formRecognizerResourceGroupLocation string = location
+
 
 param formRecognizerSkuName string = 'S0'
 
@@ -126,22 +121,21 @@ param adminPassword string
 param deployJumpHost bool = true
 
 
-//adding azd tags so app service instance deployed by the LZA is discovered during azd deploy phase
-var tags = union({
+
+var expandedTags = union({
   'azd-env-name': environmentName
-  'azd-service-name': 'backend' 
 }, resourceTags)
 
 
 //Using the azd enviroment name as the workload name. For the LZA enviroment concept (which is different from the azd env concept) I'm using the static string 'azd
-module appServiceLza 'appservice-landing-zone-accelerator/scenarios/secure-baseline-multitenant/bicep/main.bicep' = {
+module appServiceLza 'lza-libs/appservice-landing-zone-accelerator/scenarios/secure-baseline-multitenant/bicep/main.bicep' = {
   name: 'app-service-lza'
   params: {
     location: location
     workloadName: environmentName
     environmentName: lzaEnvironmentName
     numericSuffix: numericSuffix
-    resourceTags: tags
+    resourceTags: expandedTags
     vnetHubAddressSpace: vnetHubAddressSpace
     subnetHubFirewallAddressSpace: subnetHubFirewallAddressSpace
     subnetHubBastionAddressSpace: subnetHubBastionAddressSpace
@@ -161,6 +155,10 @@ module appServiceLza 'appservice-landing-zone-accelerator/scenarios/secure-basel
     deployJumpHost: deployJumpHost
     installClis: true
     installSsms: false
+    installJava: true
+    installNode: true
+    installPython: true
+    installPwsh: true
     autoApproveAfdPrivateEndpoint: false
 
   }
@@ -174,35 +172,36 @@ module appServiceLza 'appservice-landing-zone-accelerator/scenarios/secure-basel
 var spokeResourceGroupName = 'rg-spoke-${environmentName}-${lzaEnvironmentName}-${location}'
 var openAIAccountName = appServiceLza.outputs.openAIAccountName
 var appServiceIdentityPrincipalId = appServiceLza.outputs.webappUserIdentityAssignedPrincipalId
+var appServiceIdentityClientId = appServiceLza.outputs.webAppUserAssignedManagedIdenityClientId
 
+//adding azd tags so app service instance deployed by the LZA is discovered during azd deploy phase
+var azdRequiredTags = { 
+  'azd-service-name': 'backend' 
+}
 
-module appSupportingServices 'app-supporting-services/app-supporting-services-main.bicep' = {
+module appSupportingServices 'modules/supporting-services-main.bicep' = {
   name: 'app-supporting-services'
   scope: resourceGroup(spokeResourceGroupName)
   params: {
+    appServiceName:appServiceLza.outputs.webAppResourceName
+    azdServiceTags: azdRequiredTags
     appServiceIdentityPrincipalId:appServiceIdentityPrincipalId
+    appServiceIdentityClientId:appServiceIdentityClientId
     userPrincipalId:userPrincipalId
     environmentName: environmentName
     location: location
-    applicationInsightsDashboardName: applicationInsightsDashboardName
-    applicationInsightsName: applicationInsightsName
-    logAnalyticsName: logAnalyticsName
     searchServiceName: searchServiceName
-    searchServiceResourceGroupName: searchServiceResourceGroupName
     searchServiceLocation: searchServiceLocation
     searchServiceSkuName: searchServiceSkuName
     searchIndexName: searchIndexName
     searchQueryLanguage: searchQueryLanguage
     searchQuerySpeller: searchQuerySpeller
     storageAccountName: storageAccountName
-    storageResourceGroupName: storageResourceGroupName
     storageResourceGroupLocation: storageResourceGroupLocation
     storageContainerName: storageContainerName
     storageSkuName: storageSkuName
     openAIAccountName: openAIAccountName
     formRecognizerServiceName: formRecognizerServiceName
-    formRecognizerResourceGroupName: formRecognizerResourceGroupName
-    formRecognizerResourceGroupLocation: formRecognizerResourceGroupLocation
     formRecognizerSkuName: formRecognizerSkuName
     chatGptDeploymentName: chatGptDeploymentName
     chatGptDeploymentCapacity: chatGptDeploymentCapacity
@@ -224,6 +223,7 @@ module appSupportingServices 'app-supporting-services/app-supporting-services-ma
 
 
 output AZURE_RESOURCE_GROUP string = spokeResourceGroupName
+output AZURE_TENANT_ID string = tenant().tenantId
 
 // Shared by all OpenAI deployments
 output OPENAI_HOST string = 'azure'

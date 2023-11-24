@@ -10,16 +10,16 @@ if (-not (Test-Path './infra/appservice-landing-zone-accelerator')) {
         Write-Host "Downloading App Service Multitenant Secure Scenario from tag: https://github.com/Azure/appservice-landing-zone-accelerator/archive/refs/tags/v$tag.tar.gz"
         Invoke-WebRequest -Uri "https://github.com/Azure/appservice-landing-zone-accelerator/archive/refs/tags/v$tag.tar.gz" -OutFile 'appservice-landing-zone-accelerator.tar.gz'
         # Extract only the required folders
-        tar -xvzf appservice-landing-zone-accelerator.tar.gz --wildcards 'appservice-landing-zone-accelerator*/scenarios/secure-baseline-multitenant/bicep'
-        tar -xvzf appservice-landing-zone-accelerator.tar.gz --wildcards 'appservice-landing-zone-accelerator*/scenarios/shared/bicep'
+        tar -xf appservice-landing-zone-accelerator.tar.gz 'appservice-landing-zone-accelerator*/scenarios/secure-baseline-multitenant/bicep'
+        tar -xf appservice-landing-zone-accelerator.tar.gz 'appservice-landing-zone-accelerator*/scenarios/shared/bicep'
     }
     
     if (-not [string]::IsNullOrEmpty($branch)) {
         Write-Host "Downloading App Service Multitenant Secure Scenario from branch: https://api.github.com/repos/Azure/appservice-landing-zone-accelerator/tarball/$branch"
         Invoke-WebRequest -Uri "https://api.github.com/repos/Azure/appservice-landing-zone-accelerator/tarball/$branch" -OutFile 'appservice-landing-zone-accelerator.tar.gz'
         # Extract only the required folders
-        tar -xvzf appservice-landing-zone-accelerator.tar.gz --wildcards 'Azure-appservice-landing-zone-accelerator*/scenarios/secure-baseline-multitenant/bicep'
-        tar -xvzf appservice-landing-zone-accelerator.tar.gz --wildcards 'Azure-appservice-landing-zone-accelerator*/scenarios/shared/bicep'
+        tar -xf appservice-landing-zone-accelerator.tar.gz 'Azure-appservice-landing-zone-accelerator*/scenarios/secure-baseline-multitenant/bicep'
+        tar -xf appservice-landing-zone-accelerator.tar.gz 'Azure-appservice-landing-zone-accelerator*/scenarios/shared/bicep'
     }
     
     # Get the directory with the prefix
