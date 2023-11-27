@@ -1,4 +1,4 @@
-# Chat With You data with Java and Azure Open AI - LZA App Accelerator
+# Chat With You Data with Java and Azure Open AI - LZA App Accelerator
 This is a PoC about automating apps deployment on production ready environment provided by [Azure Landing Zones](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/app-platform/ready).
 
 In this example we are going to deploy the [Azure Open AI Java reference template](https://learn.microsoft.com/en-us/azure/developer/intro/azure-ai-for-developers?pivots=java#azure-ai-reference-templates) on top of the [App Service LZA](https://github.com/Azure/appservice-landing-zone-accelerator) using the [Azure Developer CLI](https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/overview)
