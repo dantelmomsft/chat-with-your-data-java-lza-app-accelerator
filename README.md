@@ -19,7 +19,7 @@ In this example we are going to deploy the [Azure Open AI Java reference templat
 2. Run `cd chat-with-your-data-java-lza-app-accelerator` 
 3. Run `azd restore`. Provide 'temp' as value for azd env name. It will download the chat-with-your-data-java [source code ](https://github.com/Azure-Samples/azure-search-openai-demo-java)
 4. Run cd `chat-with-your-data-java-lza-app-accelerator/infra/app-service` and copy here the .azure folder that has been created on your laptop at the end of [Deploy Infrastructure](#deploy-the-infrastructure)  phase.
-5 Run `azd auth login`
+5. Run `azd auth login`
 6. Run `azd restore`. This is required for this code sample to ingest documents into the Azure AI search index. It will take a couple of minutes.
 7. run `azd deploy`. This will build and deploy the java app.
 8. From the jumpbox open edge browser and connect to the app service root page: https://<app-service-name>.azurewebsites.net. You should see the app home page.
