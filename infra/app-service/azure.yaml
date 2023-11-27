@@ -6,23 +6,23 @@ metadata:
 infra:
   path: bicep
   module: chat-with-your-data-java-main
-services:
-  backend:
-    project: ../../app/src/azure-search-openai-demo-java/app/backend
-    language: java
-    host: appservice
-    hooks:
-     prepackage:
-        posix:
-          shell: sh
-          run:  cd ../frontend; npm install;npm run build
-          interactive: true
-          continueOnError: false
-        windows:
-          shell: pwsh
-          run:  cd ../frontend; npm install;npm run build
-          interactive: true
-          continueOnError: false
+# services:
+#   backend:
+#     project: ../../app/src/azure-search-openai-demo-java/app/backend
+#     language: java
+#     host: appservice
+#     hooks:
+#      prepackage:
+#         posix:
+#           shell: sh
+#           run:  cd ../frontend; npm install;npm run build
+#           interactive: true
+#           continueOnError: false
+#         windows:
+#           shell: pwsh
+#           run:  cd ../frontend; npm install;npm run build
+#           interactive: true
+#           continueOnError: false
 hooks:
     preprovision:
         posix:

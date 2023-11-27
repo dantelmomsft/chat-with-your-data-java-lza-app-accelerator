@@ -4,7 +4,8 @@ param (
 )
 
 if (-not (Test-Path './infra/appservice-landing-zone-accelerator')) {
-    Set-Location -Path './infra'
+    # Set-Location -Path './infra'
+    Set-Location -Path './bicep/lza-libs'
     
     if (-not [string]::IsNullOrEmpty($tag)) {
         Write-Host "Downloading App Service Multitenant Secure Scenario from tag: https://github.com/Azure/appservice-landing-zone-accelerator/archive/refs/tags/v$tag.tar.gz"
@@ -24,7 +25,8 @@ if (-not (Test-Path './infra/appservice-landing-zone-accelerator')) {
     
     # Get the directory with the prefix
     $dir = Get-ChildItem -Directory | Where-Object { $_.Name -like '*appservice-landing-zone-accelerator-*' }
-    
+
+
     # Check if directory exists
     if ($dir) {
         # Rename the directory
@@ -35,10 +37,12 @@ if (-not (Test-Path './infra/appservice-landing-zone-accelerator')) {
     }
     
     # Remove the downloaded file
-    Remove-Item -Path 'appservice-landing-zone-accelerator.tar.gz'
-    
-    Set-Location -Path '..'
+    Remove-Item -Path 'appservice-landing-zone-accelerator.tar.gz'    
+
+    Set-Location -Path '../..'
 }
 else {
     Write-Host "App Service Multitenant Secure Scenario already downloaded"
 }
+
+Write-Host "end of script"
