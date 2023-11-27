@@ -3,8 +3,8 @@ param (
     [string]$tag = ""
 )
 
-if (-not (Test-Path './infra/appservice-landing-zone-accelerator')) {
-    Set-Location -Path './infra'
+if (-not (Test-Path './bicep/lza-libs/appservice-landing-zone-accelerator')) {
+    Set-Location -Path './bicep/lza-libs'
     
     if (-not [string]::IsNullOrEmpty($tag)) {
         Write-Host "Downloading App Service Multitenant Secure Scenario from tag: https://github.com/Azure/appservice-landing-zone-accelerator/archive/refs/tags/v$tag.tar.gz"
@@ -37,8 +37,10 @@ if (-not (Test-Path './infra/appservice-landing-zone-accelerator')) {
     # Remove the downloaded file
     Remove-Item -Path 'appservice-landing-zone-accelerator.tar.gz'
     
-    Set-Location -Path '..'
+    Set-Location -Path '../..'
 }
 else {
     Write-Host "App Service Multitenant Secure Scenario already downloaded"
 }
+
+Write-Host "App Service LZA download completed"
