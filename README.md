@@ -7,7 +7,7 @@ In this example we are going to deploy the [Azure Open AI Java reference templat
 
 ### Deploy the infrastructure
 1. Clone this repo. `git clone https://github.com/dantelmomsft/chat-with-your-data-java-lza-app-accelerator.git`
-2. Run `cd chat-with-your-data-java-lza-app-accelerator` 
+2. Run `cd chat-with-your-data-java-lza-app-accelerator/infra/app-service` 
 3. Run `azd auth login` to authenticate with your Azure subscription.
 4. Run `azd provision` to provision the infrastructure. Provide an env name and the deployment region. So fat it has been tested with France central. This will take several minutes and will:
     - Download the app service lza code in  the folder `infra/app-service/bicep/lza-libs`.
