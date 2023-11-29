@@ -3,57 +3,57 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "environmentName": {
-      "value": "${AZURE_ENV_NAME}"
+      "value": "lza-app-acc-test"
     },
     "location": {
-      "value": "${AZURE_LOCATION}"
+      "value": "francecentral"
     },
     "userPrincipalId": {
-      "value": "${AZURE_PRINCIPAL_ID}"
+      "value": "1a1f9195-9baf-4bb1-a741-7bf94bfc6d58"
     },
     "formRecognizerSkuName": {
       "value": "S0"
     },
     "searchIndexName": {
-      "value": "${AZURE_SEARCH_INDEX=gptkbindex}"
+      "value": "gptkbindex"
     },
     "searchServiceSkuName": {
-      "value": "${AZURE_SEARCH_SERVICE_SKU=standard}"
+      "value": "standard"
     },
     "searchQueryLanguage": {
-      "value": "${AZURE_SEARCH_QUERY_LANGUAGE=en-us}"
+      "value": "en-us"
     },
     "searchQuerySpeller": {
-      "value": "${AZURE_SEARCH_QUERY_SPELLER=lexicon}"
+      "value": "lexicon"
     },
     "storageSkuName": {
-      "value": "${AZURE_STORAGE_SKU=Standard_LRS}"
+      "value": "Standard_LRS"
     },
     "chatGptDeploymentName": {
-      "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT=chat}"
+      "value": "chat"
     },
     "embeddingDeploymentName": {
-      "value": "${AZURE_OPENAI_EMB_DEPLOYMENT=embedding}"
+      "value": "embedding"
     },
     "useAuthentication": {
-      "value": "${AZURE_USE_AUTHENTICATION=false}"
+      "value": false
     },
     "serverAppId": {
-      "value": "${AZURE_SERVER_APP_ID}"
+      "value": ""
     },
     "serverAppSecret": {
-      "value": "${AZURE_SERVER_APP_SECRET}"
+      "value": ""
     },
     "clientAppId": {
-      "value": "${AZURE_CLIENT_APP_ID}"
+      "value": ""
     },
     "allowedOrigin": {
-      "value": "${ALLOWED_ORIGIN}"
+      "value": ""
     },
 
    
    "lzaEnvironmentName": {
-       "value": "${AZURE_LZA_ENV_NAME=dev}"
+       "value": "dev"
    },
    "vnetHubResourceId": {
        "value": ""
@@ -65,7 +65,7 @@
        "value": "10.242.0.0/20"
    },
    "enableEgressLockdown" : {
-       "value": true
+       "value": false
    },
    "deployJumpHost": {
        "value": true

@@ -3,7 +3,7 @@ targetScope = 'subscription'
 
 
 @minLength(1)
-@maxLength(64)
+@maxLength(20)
 @description('Name of the the environment which is used to generate a short unique hash used in all resources.')
 param environmentName string
 
@@ -17,8 +17,7 @@ param location string
 // ================ //
 
 
-param searchServiceName string = ''
-param searchServiceLocation string = ''
+
 // The free tier does not support managed identity (required) or semantic search (optional)
 @allowed(['basic', 'standard', 'standard2', 'standard3', 'storage_optimized_l1', 'storage_optimized_l2'])
 param searchServiceSkuName string // Set in main.parameters.json
@@ -26,13 +25,10 @@ param searchIndexName string // Set in main.parameters.json
 param searchQueryLanguage string // Set in main.parameters.json
 param searchQuerySpeller string // Set in main.parameters.json
 
-param storageAccountName string = ''
-param storageResourceGroupLocation string = location
+
 param storageContainerName string = 'content'
 param storageSkuName string // Set in main.parameters.json
 
-
-param formRecognizerServiceName string = ''
 
 
 param formRecognizerSkuName string = 'S0'
@@ -120,6 +116,9 @@ param adminPassword string
 @description('set to true if you want to deploy a jumpbox/devops VM')
 param deployJumpHost bool = true
 
+@description('set to true if you want to intercept all outbound traffic with azure firewall')
+param enableEgressLockdown bool = false
+
 
 
 var expandedTags = union({
@@ -150,7 +149,7 @@ module appServiceLza 'lza-libs/appservice-landing-zone-accelerator/scenarios/sec
     linuxFxVersion:'JAVA|17-java17'
     adminUsername: adminUsername
     adminPassword: adminPassword
-    enableEgressLockdown: false
+    enableEgressLockdown: enableEgressLockdown
     deployOpenAi: true
     deployJumpHost: deployJumpHost
     installClis: true
@@ -159,7 +158,7 @@ module appServiceLza 'lza-libs/appservice-landing-zone-accelerator/scenarios/sec
     installNode: true
     installPython: true
     installPwsh: true
-    autoApproveAfdPrivateEndpoint: false
+    autoApproveAfdPrivateEndpoint: true
 
   }
 }
@@ -172,7 +171,15 @@ module appServiceLza 'lza-libs/appservice-landing-zone-accelerator/scenarios/sec
 var spokeResourceGroupName = 'rg-spoke-${environmentName}-${lzaEnvironmentName}-${location}'
 var openAIAccountName = appServiceLza.outputs.openAIAccountName
 var appServiceIdentityPrincipalId = appServiceLza.outputs.webappUserIdentityAssignedPrincipalId
-var appServiceIdentityClientId = appServiceLza.outputs.webAppUserAssignedManagedIdenityClientId
+var appServiceIdentityClientId = appServiceLza.outputs.webAppUserAssignedManagedIdentityClientId
+var logAnalyticsWsId = appServiceLza.outputs.logAnalyticsWsId
+var hubVNetId = appServiceLza.outputs.hubVNetId
+var hubVNetName = appServiceLza.outputs.hubVNetName
+var spokeVnetId = appServiceLza.outputs.spokeVNetId
+var spokeVnetName = appServiceLza.outputs.spokeVnetName
+
+var subnetPeId = appServiceLza.outputs.subnetPeId
+var naming = appServiceLza.outputs.naming
 
 //adding azd tags so app service instance deployed by the LZA is discovered during azd deploy phase
 var azdRequiredTags = { 
@@ -183,25 +190,27 @@ module appSupportingServices 'modules/supporting-services-main.bicep' = {
   name: 'app-supporting-services'
   scope: resourceGroup(spokeResourceGroupName)
   params: {
+    naming: naming
+    logAnalyticsWsId:logAnalyticsWsId
     appServiceName:appServiceLza.outputs.webAppResourceName
     azdServiceTags: azdRequiredTags
+    hubVNetId:hubVNetId
+    hubVNetName:hubVNetName
+    spokeVnetId:spokeVnetId
+    spokeVnetName:spokeVnetName
+    subnetPrivateEndpointId:subnetPeId
     appServiceIdentityPrincipalId:appServiceIdentityPrincipalId
     appServiceIdentityClientId:appServiceIdentityClientId
     userPrincipalId:userPrincipalId
     environmentName: environmentName
     location: location
-    searchServiceName: searchServiceName
-    searchServiceLocation: searchServiceLocation
     searchServiceSkuName: searchServiceSkuName
     searchIndexName: searchIndexName
     searchQueryLanguage: searchQueryLanguage
     searchQuerySpeller: searchQuerySpeller
-    storageAccountName: storageAccountName
-    storageResourceGroupLocation: storageResourceGroupLocation
     storageContainerName: storageContainerName
     storageSkuName: storageSkuName
     openAIAccountName: openAIAccountName
-    formRecognizerServiceName: formRecognizerServiceName
     formRecognizerSkuName: formRecognizerSkuName
     chatGptDeploymentName: chatGptDeploymentName
     chatGptDeploymentCapacity: chatGptDeploymentCapacity

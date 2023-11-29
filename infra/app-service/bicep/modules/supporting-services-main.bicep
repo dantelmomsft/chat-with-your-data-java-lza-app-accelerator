@@ -1,16 +1,37 @@
 targetScope = 'resourceGroup'
 
+// reference to the BICEP naming module
+param naming object
+
 @description('Name of the Azure Open AI nstance created by the LZA accelerator')
 param openAIAccountName string = ''
 
 @description('ID of the App Service identity principal id created by the LZA accelerator')
 param appServiceIdentityPrincipalId string
 
-@description('ID of the App Service identity client id created by the LZA accelerator')
+@description('Client ID of the App Service identity created by the LZA accelerator')
 param appServiceIdentityClientId string
 
 @description('Name of the App Service instance created by the LZA accelerator')
 param appServiceName string
+
+@description('ID of the subnet private endpoint created by the LZA accelerator for app service dependencies')
+param subnetPrivateEndpointId string
+
+@description('Name of the Log Analytics Workspace instance created by the LZA accelerator')
+param logAnalyticsWsId string
+
+@description('ID of the VNet Hub instance created by the LZA accelerator')
+param hubVNetId string
+
+@description('Name of the VNet Hub instance created by the LZA accelerator')
+param hubVNetName string
+
+@description('ID of the VNet Spoke instance created by the LZA accelerator')
+param spokeVnetId string
+
+@description('Name of the VNet Spoke instance created by the LZA accelerator')
+param spokeVnetName string
 
 @description(' tags required by azd so that the service is discovered by deploy phase')
 param azdServiceTags object = {}
@@ -22,12 +43,9 @@ param environmentName string
 
 @minLength(1)
 @description('Primary location for all resources')
-param location string
+param location string = resourceGroup().location
 
 
-param searchServiceName string = ''
-
-param searchServiceLocation string = ''
 // The free tier does not support managed identity (required) or semantic search (optional)
 @allowed(['basic', 'standard', 'standard2', 'standard3', 'storage_optimized_l1', 'storage_optimized_l2'])
 param searchServiceSkuName string // Set in main.parameters.json
@@ -35,15 +53,10 @@ param searchIndexName string // Set in main.parameters.json
 param searchQueryLanguage string // Set in main.parameters.json
 param searchQuerySpeller string // Set in main.parameters.json
 
-param storageAccountName string = ''
-param storageResourceGroupLocation string = location
+
+
 param storageContainerName string = 'content'
 param storageSkuName string // Set in main.parameters.json
-
-
-
-
-param formRecognizerServiceName string = ''
 
 
 param formRecognizerSkuName string = 'S0'
@@ -70,13 +83,38 @@ param allowedOrigin string = '' // should start with https://, shouldn't end wit
 param userPrincipalId string = ''
 
 
-var abbrs = loadJsonContent('abbreviations.json')
-var resourceToken = toLower(uniqueString(subscription().id, environmentName, location))
+
+//var resourceToken = toLower(uniqueString(subscription().id, environmentName, location))
 var tags = { 'azd-env-name': environmentName }
 
+var resourceNames = {
+  storageAccount: naming.storageAccount.nameUnique
+  documentIntelligence: 'frc-${naming.cognitiveAccount.nameUnique}'
+  azureAiSearch: 'srch-${naming.cognitiveAccount.nameUnique}'
+}
 
-//Add model deployments to the existing OpenAI account created by the LZA accelerator
-module openAIModelsDeployment 'ai/cognitiveservices.bicep' =  {
+var virtualNetworkLinks = [
+  {
+    vnetName: hubVNetName
+    vnetId: hubVNetId
+    registrationEnabled: false
+  }
+  {
+    vnetName: spokeVnetName
+    vnetId: spokeVnetId
+    registrationEnabled: false
+  }
+]
+
+var vnetHubSplitTokens = !empty(hubVNetId) ? split(hubVNetId, '/') : array('')
+
+
+/***************************************************************************************
+ * Azure Open AI account
+ ***************************************************************************************/
+
+ //Add model deployments to the existing OpenAI account created by the LZA accelerator
+module openAIModelsDeployment 'ai-services/aoai-modeldeployment.bicep' =  {
   name: 'openai-models-deployment'
   params: {
     name: openAIAccountName
@@ -107,50 +145,115 @@ module openAIModelsDeployment 'ai/cognitiveservices.bicep' =  {
 }
 
 
-resource documentIntelligence 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
-  name: !empty(formRecognizerServiceName) ? formRecognizerServiceName : '${abbrs.cognitiveServicesFormRecognizer}${resourceToken}'
-  location: location
-  tags: tags
-  kind: 'FormRecognizer'
-  properties: {
-    customSubDomainName: !empty(formRecognizerServiceName) ? formRecognizerServiceName : '${abbrs.cognitiveServicesFormRecognizer}${resourceToken}'
-    publicNetworkAccess: 'Enabled'
-    networkAcls: {
-      bypass: 'AzureServices'
-      defaultAction: 'Allow'
-    }
-  }
-  sku: {
-    name:formRecognizerSkuName
+/***************************************************************************************
+ * Document Intelligence
+ ***************************************************************************************/
+var cognitiveServicesDnsZoneName = 'privatelink.cognitiveservices.azure.com' 
+
+
+module documentIntelligence 'ai-services/cognitive-services.bicep' = {
+  name: take('${resourceNames.documentIntelligence}-documentIntelligence-Deployment', 64)
+  params: {
+    name: resourceNames.documentIntelligence
+    location: location
+    kind: 'FormRecognizer'
+    sku: formRecognizerSkuName
+    tags: tags
+    hasPrivateLinks: !empty(subnetPrivateEndpointId)
+    diagnosticSettings: [
+      {
+        name: 'DocumentIntelligence-Default-Diag'        
+        workspaceResourceId: logAnalyticsWsId
+      }
+    ]
   }
 }
 
-module searchService 'search/search-services.bicep' = {
-  name: 'search-service'
+
+module documentIntelligencePrivateDnsZone '../lza-libs/appservice-landing-zone-accelerator/scenarios/shared/bicep/private-dns-zone.bicep' = if ( !empty(subnetPrivateEndpointId) ) {
+  // conditional scope is not working: https://github.com/Azure/bicep/issues/7367
+  //scope: empty(vnetHubResourceId) ? resourceGroup() : resourceGroup(vnetHubSplitTokens[2], vnetHubSplitTokens[4]) 
+  scope: resourceGroup(vnetHubSplitTokens[2], vnetHubSplitTokens[4])
+  name: take('${replace(cognitiveServicesDnsZoneName, '.', '-')}-PrivateDnsZoneDeployment', 64)
   params: {
-    name: !empty(searchServiceName) ? searchServiceName : 'gptkb-${resourceToken}'
-    location: !empty(searchServiceLocation) ? searchServiceLocation : location
+    name: cognitiveServicesDnsZoneName
+    virtualNetworkLinks: virtualNetworkLinks
     tags: tags
-    authOptions: {
-      aadOrApiKey: {
-        aadAuthFailureMode: 'http401WithBearerChallenge'
-      }
-    }
-    sku: {
-      name: searchServiceSkuName
-    }
-    semanticSearch: 'free'
   }
 }
+
+module peDocumentIntelligence '../lza-libs/appservice-landing-zone-accelerator/scenarios/shared/bicep/private-endpoint.bicep' = if ( !empty(subnetPrivateEndpointId) ) {
+  name: take('pe-${resourceNames.documentIntelligence}-Deployment', 64)
+  params: {
+    name: take('pe-${resourceNames.documentIntelligence}', 64)
+    location: location
+    tags: tags
+    privateDnsZonesId: documentIntelligencePrivateDnsZone.outputs.privateDnsZonesId
+    privateLinkServiceId: documentIntelligence.outputs.resourceId
+    snetId: subnetPrivateEndpointId
+    subresource: 'account'
+  }
+}
+
+/***************************************************************************************
+ * Azure AI Search
+ ***************************************************************************************/
+var azureAISearchDnsZoneName = 'privatelink.search.windows.net' 
+
+module azureAISearch 'search/aisearch-services.bicep' = {
+  name: take('${resourceNames.azureAiSearch}-AzureAISearch-Deployment', 64)
+  params: {
+    name: resourceNames.azureAiSearch
+    location: location
+    sku: searchServiceSkuName
+    tags: tags
+    hasPrivateLinks: !empty(subnetPrivateEndpointId)
+    diagnosticSettings: [
+      {
+        name: 'AzureAISearch-Default-Diag'        
+        workspaceResourceId: logAnalyticsWsId
+      }
+    ]
+  }
+}
+
+
+module azureAISearchPrivateDnsZone '../lza-libs/appservice-landing-zone-accelerator/scenarios/shared/bicep/private-dns-zone.bicep' = if ( !empty(subnetPrivateEndpointId) ) {
+  scope: resourceGroup(vnetHubSplitTokens[2], vnetHubSplitTokens[4])
+  name: take('${replace(azureAISearchDnsZoneName, '.', '-')}-PrivateDnsZoneDeployment', 64)
+  params: {
+    name: azureAISearchDnsZoneName
+    virtualNetworkLinks: virtualNetworkLinks
+    tags: tags
+  }
+}
+
+module peAzureAISearch '../lza-libs/appservice-landing-zone-accelerator/scenarios/shared/bicep/private-endpoint.bicep' = if ( !empty(subnetPrivateEndpointId) ) {
+  name: take('pe-${resourceNames.azureAiSearch}-Deployment', 64)
+  params: {
+    name: take('pe-${resourceNames.azureAiSearch}', 64)
+    location: location
+    tags: tags
+    privateDnsZonesId: azureAISearchPrivateDnsZone.outputs.privateDnsZonesId
+    privateLinkServiceId: azureAISearch.outputs.resourceId
+    snetId: subnetPrivateEndpointId
+    subresource: 'searchService'
+  }
+}
+
+/***************************************************************************************
+ * Storage Account
+ ***************************************************************************************/
+ var storageAccountBlobDnsZoneName = 'privatelink.blob.core.windows.net' 
 
 module storage 'storage/storage-account.bicep' = {
-  name: 'storage'
+  name: take('${resourceNames.storageAccount}-StorageAccount-Deployment', 64)
   params: {
-    name: !empty(storageAccountName) ? storageAccountName : '${abbrs.storageStorageAccounts}${resourceToken}'
-    location: storageResourceGroupLocation
+    name: '${resourceNames.storageAccount}'
+    location: location
     tags: tags
     allowBlobPublicAccess: false
-    publicNetworkAccess: 'Enabled'
+    publicNetworkAccess: 'Disabled'
     sku: {
       name: storageSkuName
     }
@@ -167,6 +270,33 @@ module storage 'storage/storage-account.bicep' = {
   }
 }
 
+module storageAccountBlobPrivateDnsZone '../lza-libs/appservice-landing-zone-accelerator/scenarios/shared/bicep/private-dns-zone.bicep' = if ( !empty(subnetPrivateEndpointId) ) {
+  scope: resourceGroup(vnetHubSplitTokens[2], vnetHubSplitTokens[4])
+  name: take('${replace(storageAccountBlobDnsZoneName, '.', '-')}-PrivateDnsZoneDeployment', 64)
+  params: {
+    name: storageAccountBlobDnsZoneName
+    virtualNetworkLinks: virtualNetworkLinks
+    tags: tags
+  }
+}
+
+module pestorageAccountBlob '../lza-libs/appservice-landing-zone-accelerator/scenarios/shared/bicep/private-endpoint.bicep' = if ( !empty(subnetPrivateEndpointId) ) {
+  name: take('pe-${resourceNames.storageAccount}-Deployment', 64)
+  params: {
+    name: take('pe-${resourceNames.storageAccount}', 64)
+    location: location
+    tags: tags
+    privateDnsZonesId: storageAccountBlobPrivateDnsZone.outputs.privateDnsZonesId
+    privateLinkServiceId: storage.outputs.resourceId
+    snetId: subnetPrivateEndpointId
+    subresource: 'blob'
+  }
+}
+
+
+/***************************************************************************************
+ * App Service Extension with tags and app settings
+ ***************************************************************************************/
 
 resource appService 'Microsoft.Web/sites@2022-03-01' existing = {
   name: appServiceName
@@ -194,7 +324,7 @@ var newAppSettings = {
   AZURE_STORAGE_ACCOUNT: storage.outputs.name
   AZURE_STORAGE_CONTAINER: storageContainerName
   AZURE_SEARCH_INDEX: searchIndexName
-  AZURE_SEARCH_SERVICE: searchService.outputs.name
+  AZURE_SEARCH_SERVICE: azureAISearch.outputs.name
   AZURE_SEARCH_QUERY_LANGUAGE: searchQueryLanguage
   AZURE_SEARCH_QUERY_SPELLER: searchQuerySpeller
   AZURE_OPENAI_EMB_MODEL_NAME: embeddingModelName
@@ -341,7 +471,7 @@ output formRecognizerService string = documentIntelligence.name
 output formRecognizerResourceGroup string = resourceGroup().name
 
 output azureSearchIndex string = searchIndexName
-output azureSearchService string = searchService.outputs.name
+output azureSearchService string = azureAISearch.outputs.name
 output azureSearchServiceResourceGroup string = resourceGroup().name
 
 output azureStorageAccount string = storage.outputs.name

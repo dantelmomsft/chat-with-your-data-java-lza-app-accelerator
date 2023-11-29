@@ -1,0 +1,84 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "environmentName": {
+      "value": "lza-app-acc-test"
+    },
+    "location": {
+      "value": "francecentral"
+    },
+    "openAIAccountName": {
+      "value": "cog-lza-app-acc-test-dev-frc-jvb3b4"
+    },
+    "appServiceName": {
+      "value": "app-lza-app-acc-test-dev-frc-jvb3b4"
+    },
+    "userPrincipalId": {
+      "value": "1a1f9195-9baf-4bb1-a741-7bf94bfc6d58"
+    },
+    "subnetPrivateEndpointId": {
+      "value": "/subscriptions/8b82fc4d-aabe-4658-88f2-5674bf49eec0/resourceGroups/rg-spoke-lza-app-acc-test-dev-francecentral/providers/Microsoft.Network/virtualNetworks/vnet-lza-app-acc-test-dev-frc-spoke/subnets/snet-pe-vnet-lza-app-acc-test-dev-frc-spoke"
+    },
+    "logAnalyticsWsId": {
+      "value": "/subscriptions/8b82fc4d-aabe-4658-88f2-5674bf49eec0/resourcegroups/rg-hub-lza-app-acc-test-dev-francecentral/providers/microsoft.operationalinsights/workspaces/log-lza-app-acc-test-dev-frc-hub"
+    },
+    "hubVNetId": {
+      "value": "/subscriptions/8b82fc4d-aabe-4658-88f2-5674bf49eec0/resourceGroups/rg-hub-lza-app-acc-test-dev-francecentral/providers/Microsoft.Network/virtualNetworks/vnet-lza-app-acc-test-dev-frc-hub"
+    },
+    "hubVNetName": {
+      "value": "vnet-lza-app-acc-test-dev-frc-hub"
+    },
+    "spokeVnetId": {
+      "value": "/subscriptions/8b82fc4d-aabe-4658-88f2-5674bf49eec0/resourceGroups/rg-spoke-lza-app-acc-test-dev-francecentral/providers/Microsoft.Network/virtualNetworks/vnet-lza-app-acc-test-dev-frc-spoke"
+    },
+    "spokeVnetName": {
+      "value": "vnet-lza-app-acc-test-dev-frc-spoke"
+    },
+
+    "appServiceIdentityPrincipalId": {
+      "value": "af4fa0b9-d002-45ca-b83c-cdeea196fb2c"
+    },
+
+    "appServiceIdentityClientId": {
+      "value": "f48110ae-a18f-4718-8e1d-3c7e69a23847"
+    },
+    "naming": {
+      "value": {
+        "storageAccount": {
+          "nameUnique": "strlzaappacctestdevfrcjv"
+        } ,
+      "cognitiveAccount": {
+        "nameUnique": "cog-lza-app-acc-test-dev-frc-jvb3b4"
+      } }
+    },
+   
+    "formRecognizerSkuName": {
+      "value": "S0"
+    },
+    "searchIndexName": {
+      "value": "gptkbindex"
+    },
+    "searchServiceSkuName": {
+      "value": "standard"
+    },
+    "searchQueryLanguage": {
+      "value": "en-us"
+    },
+    "searchQuerySpeller": {
+      "value": "lexicon"
+    },
+    "storageSkuName": {
+      "value": "Standard_LRS"
+    },
+    "chatGptDeploymentName": {
+      "value": "chat"
+    },
+    "embeddingDeploymentName": {
+      "value": "embedding"
+    },
+    "useAuthentication": {
+      "value": false
+    }
+  }
+}
