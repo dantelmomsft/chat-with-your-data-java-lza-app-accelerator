@@ -20,7 +20,7 @@ In this example we are going to deploy the [Azure Open AI Java reference templat
 3. To download the the chat-with-your-data-java [source code ](https://github.com/Azure-Samples/azure-search-openai-demo-java) run:
     - *Windows Power Shell* - `.\scripts\download-app-source.ps1 -branch main` 
     - *Linux/Windows WSL* - `./scripts/download-app-source.sh --branch main`.
-4. Run `cd chat-with-your-data-java-lza-app-accelerator/infra/app-service` and copy here the `chat-with-your-data-java-lza-app-accelerator/infra\app-service\.azure` local folder that has been created on your laptop at the end of [Deploy Infrastructure](#deploy-the-infrastructure)  phase.
+4. Run `cd chat-with-your-data-java-lza-app-accelerator/infra/app-service` and copy here the `chat-with-your-data-java-lza-app-accelerator\infra\app-service\.azure` local folder that has been created on your laptop at the end of [Deploy Infrastructure](#deploy-the-infrastructure)  phase.
 5. Run `azd auth login`
 6. Run `azd restore`. This is required for this code sample to ingest documents into the Azure AI search index. It will take a couple of minutes.
 7. run `azd deploy`. This will build and deploy the java app.
