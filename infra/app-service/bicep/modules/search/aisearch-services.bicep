@@ -116,12 +116,13 @@ var builtInRoleNames = {
 }
 
 
-resource azureAISearch 'Microsoft.Search/searchServices@2022-09-01' = {
+resource azureAISearch 'Microsoft.Search/searchServices@2021-04-01-preview' = {
   name: name
   location: location
   tags: tags
   identity: identity
   sku: { name: sku }
+  
   properties: {
     authOptions: authOptions
     disableLocalAuth: disableLocalAuth
@@ -131,6 +132,7 @@ resource azureAISearch 'Microsoft.Search/searchServices@2022-09-01' = {
     replicaCount: replicaCount
     partitionCount: partitionCount
     publicNetworkAccess: !empty(publicNetworkAccess) ? any(publicNetworkAccess) : (hasPrivateLinks) ? 'Disabled' : 'Enabled'
+    semanticSearch: 'free'
   }
  
 }

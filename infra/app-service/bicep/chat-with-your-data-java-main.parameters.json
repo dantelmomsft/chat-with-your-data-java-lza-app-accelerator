@@ -32,8 +32,14 @@
     "chatGptDeploymentName": {
       "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT=chat}"
     },
+    "chatGptDeploymentCapacity": {
+      "value": 80
+    },
     "embeddingDeploymentName": {
       "value": "${AZURE_OPENAI_EMB_DEPLOYMENT=embedding}"
+    },
+    "embeddingDeploymentCapacity": {
+      "value": 80
     },
     "useAuthentication": {
       "value": "${AZURE_USE_AUTHENTICATION=false}"
@@ -65,7 +71,7 @@
        "value": "10.242.0.0/20"
    },
    "enableEgressLockdown" : {
-       "value": true
+       "value": false
    },
    "deployJumpHost": {
        "value": true

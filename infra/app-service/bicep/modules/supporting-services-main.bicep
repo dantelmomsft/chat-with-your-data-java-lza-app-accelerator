@@ -207,6 +207,11 @@ module azureAISearch 'search/aisearch-services.bicep' = {
     location: location
     sku: searchServiceSkuName
     tags: tags
+    authOptions: {
+      aadOrApiKey: {
+        aadAuthFailureMode: 'http401WithBearerChallenge'
+      }
+    }
     hasPrivateLinks: !empty(subnetPrivateEndpointId)
     diagnosticSettings: [
       {
@@ -467,7 +472,7 @@ module searchRoleBackend 'security/role.bicep' = {
 
 
 
-output formRecognizerService string = documentIntelligence.name
+output formRecognizerService string = documentIntelligence.outputs.name
 output formRecognizerResourceGroup string = resourceGroup().name
 
 output azureSearchIndex string = searchIndexName
