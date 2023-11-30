@@ -13,7 +13,7 @@ In this example we are going to deploy the [Azure Open AI Java reference templat
     - Download the app service lza code in  the folder `infra/app-service/bicep/lza-libs`.
     - Automatically run the app service lza code.
     - Automatically run the app bicep source code in the folder `chat-with-your-data-java-lza-app-accelerator\infra\app-service\bicep\modules`. This will create the Azure supporting services (Azure AI Search, Azure Document Intelligence, Azure Storage) required by the app on top of the App Service LZA infrastructure.
-    -  Automatically create `.azure` folder with azd env configuration. you should see a folder like this: `chat-with-your-data-java-lza-app-accelerator/infra\app-service\.azure`
+    -  Automatically create `.azure` folder with azd env configuration. you should see a folder like this: `chat-with-your-data-java-lza-app-accelerator\infra\app-service\.azure`
 ### Deploy the Java app 
 1. Connect to the jumpbox, open a command prompt and run `git clone https://github.com/dantelmomsft/chat-with-your-data-java-lza-app-accelerator.git`
 2. Run `cd chat-with-your-data-java-lza-app-accelerator` 
