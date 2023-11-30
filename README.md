@@ -13,20 +13,22 @@ In this example we are going to deploy the [Azure Open AI Java reference templat
     - Download the app service lza code in  the folder `infra/app-service/bicep/lza-libs`.
     - Automatically run the app service lza code.
     - Automatically run the app bicep source code in the folder `chat-with-your-data-java-lza-app-accelerator\infra\app-service\bicep\modules`. This will create the Azure supporting services (Azure AI Search, Azure Document INtelligence, Azure Storage) required by the app on top of the App Service LZA infrastructure.
-    -  Automatically create `.azure` folder with azd env configuration. you should see a folder like this: `chat-with-your-data-java-lza-app-accelerator/.azure`
+    -  Automatically create `.azure` folder with azd env configuration. you should see a folder like this: `chat-with-your-data-java-lza-app-accelerator/infra\app-service\.azure`
 ### Deploy the Java app 
 1. Connect to the jumpbox, open a command prompt and run `git clone https://github.com/dantelmomsft/chat-with-your-data-java-lza-app-accelerator.git`
 2. Run `cd chat-with-your-data-java-lza-app-accelerator` 
-3. Run `azd restore`. Provide 'temp' as value for azd env name. It will download the chat-with-your-data-java [source code ](https://github.com/Azure-Samples/azure-search-openai-demo-java)
-4. Run cd `chat-with-your-data-java-lza-app-accelerator/infra/app-service` and copy here the .azure folder that has been created on your laptop at the end of [Deploy Infrastructure](#deploy-the-infrastructure)  phase.
+3. To download the the chat-with-your-data-java [source code ](https://github.com/Azure-Samples/azure-search-openai-demo-java) run:
+    - *Windows Power Shell* - `.\scripts\download-app-source.ps1 -branch main` 
+    - *Linux/Windows WSL* - `./scripts/download-app-source.sh --branch main`.
+4. Run `cd chat-with-your-data-java-lza-app-accelerator/infra/app-service` and copy here the `chat-with-your-data-java-lza-app-accelerator/infra\app-service\.azure` local folder that has been created on your laptop at the end of [Deploy Infrastructure](#deploy-the-infrastructure)  phase.
 5. Run `azd auth login`
 6. Run `azd restore`. This is required for this code sample to ingest documents into the Azure AI search index. It will take a couple of minutes.
 7. run `azd deploy`. This will build and deploy the java app.
-8. From the jumpbox open edge browser and connect to the app service root page: https://<app-service-name>.azurewebsites.net. You should see the app home page.
+8. From your local browser connect to the azure front door endpoint hostname. 
+![Alt text](afd-endpoint.png)
 
 ### Known Issues and gaps
-- The jump box installation doesn't properly configure azd and maven. To fix that before running the `azd deploy` command, be sure to run
+- The jump box installation doesn't properly configure azd and maven. To fix that before running the `azd deploy` command, be sure to
     - Run the `D:\azd\azd-windows-amd64.msi` installer
     - Add to the PATH env variable the maven bin folder: `C:\Program Files\apache-maven-3.9.5\bin`
-- Trying accessing the web app through Azure Front door endpoint return 504 Gateway Timeout.
-- Azure Storage, AI search and Document Intelligence are still published like public services. We are working on making them private disabling public access and using private endpoints. 
+
