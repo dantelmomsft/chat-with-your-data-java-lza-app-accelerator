@@ -3,7 +3,7 @@ This is a PoC about automating apps deployment on production ready environment p
 
 In this example we are going to deploy the [Azure Open AI Java reference template](https://learn.microsoft.com/en-us/azure/developer/intro/azure-ai-for-developers?pivots=java#azure-ai-reference-templates) on top of the [App Service LZA](https://github.com/Azure/appservice-landing-zone-accelerator) using the [Azure Developer CLI](https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/overview)
 
-![Alt text](docs\LZA-APP-ACC-chat-with-your-data-java.png)
+![Alt text](docs/LZA-APP-ACC-chat-with-your-data-java.png)
 
 ## Getting Started
 
