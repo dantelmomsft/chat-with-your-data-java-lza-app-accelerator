@@ -1,0 +1,47 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    // The name of the workload that is being deployed. Up to 10 characters long. This wil be used as part of the naming convention (i.e. as defined here: https://learn.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/resource-naming) 
+    "workloadName": {
+      "value": "lzaaca"
+    },
+    //The name of the environment (e.g. "dev", "test", "prod", "preprod", "staging", "uat", "dr", "qa"). Up to 8 characters long.
+    "environment": {
+      "value": "dev"
+    },
+    "tags": {
+        "value": {}
+    },
+    // DDoS protection mode for the Public IP of the Application Gateway. Allowed values are "VirtualNetworkInherited", "Enabled" and "Disabled"
+    "ddosProtectionMode": {
+      "value": "Enabled"
+    },
+    // The FQDN of the Application Gateway. Must match the TLS Certificate.
+    "applicationGatewayFqdn": {
+        "value": "acahello.demoapp.com"
+    },
+    // Replace with the resource ID of the application gateway subnet of the spoke virtual network
+    "applicationGatewaySubnetId": {
+      "value": "<APPLICATION_GATEWAY_SUBNET_RESOURCE_ID>"
+    },
+    // The resource ID of the exsiting Log Analytics workload for diagnostic settngs, or nothing if you don\'t need any
+    "applicationGatewayLogAnalyticsId": {
+      "value": ""
+    },
+    // Replace with the FQDN of the hello world sample app
+    "applicationGatewayPrimaryBackendEndFqdn": {
+      "value": "<HELLO_WORLD_SAMPLE_APP_FQDN>"
+    },
+    "enableApplicationGatewayCertificate": {
+      "value": true
+    },
+    "applicationGatewayCertificateKeyName": {
+      "value": "agwcert"
+    },
+    // Replace with the resource ID of the Key Vault
+    "keyVaultId": {
+      "value": "<KEY_VAULT_RESOURCE_ID>"
+    }
+  }
+}

@@ -1,0 +1,110 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "environmentName": {
+      "value": "lza-app-acc-test"
+    },
+    "location": {
+      "value": "francecentral"
+    },
+    "userPrincipalId": {
+      "value": "1a1f9195-9baf-4bb1-a741-7bf94bfc6d58"
+    },
+    "formRecognizerSkuName": {
+      "value": "S0"
+    },
+    "searchIndexName": {
+      "value": "gptkbindex"
+    },
+    "searchServiceSkuName": {
+      "value": "standard"
+    },
+    "searchQueryLanguage": {
+      "value": "en-us"
+    },
+    "searchQuerySpeller": {
+      "value": "lexicon"
+    },
+    "storageSkuName": {
+      "value": "Standard_LRS"
+    },
+    "chatGptDeploymentName": {
+      "value": "chat"
+    },
+    "embeddingDeploymentName": {
+      "value": "embedding"
+    },
+    "useAuthentication": {
+      "value": false
+    },
+    "serverAppId": {
+      "value": ""
+    },
+    "serverAppSecret": {
+      "value": ""
+    },
+    "clientAppId": {
+      "value": ""
+    },
+    "allowedOrigin": {
+      "value": ""
+    },
+
+   
+   "lzaEnvironmentName": {
+       "value": "dev"
+   },
+   "vnetHubResourceId": {
+       "value": ""
+   },
+   "firewallInternalIp": {
+       "value": ""
+   },
+   "vnetHubAddressSpace": {
+       "value": "10.242.0.0/20"
+   },
+   "enableEgressLockdown" : {
+       "value": false
+   },
+   "deployJumpHost": {
+       "value": true
+   },
+   "subnetHubFirewallAddressSpace": {
+       "value": "10.242.0.0/26"
+   },
+   "subnetHubBastionAddressSpace": {
+       "value": "10.242.0.64/26"
+   },
+   "vnetSpokeAddressSpace": {
+       "value": "10.240.0.0/20"
+   },
+   "subnetSpokeAppSvcAddressSpace": {
+       "value": "10.240.0.0/26"
+   },
+   "subnetSpokeDevOpsAddressSpace": {
+       "value": "10.240.10.128/26"
+   },
+   "subnetSpokePrivateEndpointAddressSpace": {
+       "value": "10.240.11.0/24"
+   },
+   "webAppPlanSku": {
+       "value": "S1"
+   },
+   "webAppBaseOs" : 
+   {
+       "value": "Linux"
+   },
+   "adminUsername": {
+       "value": "azureuser"
+   },
+   "adminPassword": {
+       "value": "zxNMasKL12()"
+   },
+   "resourceTags": {
+       "value": {
+           "deployment": "bicep"
+       }
+   }
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    // The name of the workload that is being deployed. Up to 10 characters long. This wil be used as part of the naming convention (i.e. as defined here: https://learn.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/resource-naming) 
+    "workloadName": {
+      "value": "lzaaca"
+    },
+    //The name of the environment (e.g. "dev", "test", "prod", "preprod", "staging", "uat", "dr", "qa"). Up to 8 characters long.
+    "environment": {
+      "value": "dev"
+    },
+    "tags": {
+      "value": {}
+    },
+    // optional. If empty automatic name will be generated. To override, please give name of hub resource group name
+    "hubResourceGroupName": {
+      "value": ""
+    },
+    "vnetAddressPrefixes": {
+      "value": [
+        "10.0.0.0/24"
+      ]
+    },
+    "enableBastion": {
+      "value": true
+    },
+    "gatewaySubnetAddressPrefix": {
+      "value": "10.0.0.0/27"
+    },
+    "azureFirewallSubnetAddressPrefix": {
+      "value": "10.0.0.64/26"
+    },
+    "azureFirewallSubnetManagementAddressPrefix": {
+      "value": "10.0.0.128/26"
+    },
+    "bastionSubnetAddressPrefix": {
+      "value": "10.0.0.192/26"
+    }
+  }
+}

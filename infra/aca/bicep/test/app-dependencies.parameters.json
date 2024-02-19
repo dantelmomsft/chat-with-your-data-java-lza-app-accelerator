@@ -1,0 +1,79 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "environment": {
+      "value": "test"
+    },
+    "workloadName": {
+      "value": "chatjpt"
+    },
+    "location": {
+      "value": "eastus2"
+    },
+    "openAIAccountName": {
+      "value": "cog-chatjpt-ru5rd-test-eus2"
+    },
+      "subnetPrivateEndpointName": {
+      "value": "snet-pep"
+    },
+    "logAnalyticsWsId": {
+      "value": "/subscriptions/8b82fc4d-aabe-4658-88f2-5674bf49eec0/resourcegroups/rg-chatjpt-spoke-test-eus2/providers/microsoft.operationalinsights/workspaces/log-chatjpt-test-eus2"
+    },
+    "hubVNetId": {
+      "value": "/subscriptions/8b82fc4d-aabe-4658-88f2-5674bf49eec0/resourceGroups/rg-chatjpt-hub-test-eus2/providers/Microsoft.Network/virtualNetworks/vnet-test-eus2-hub"
+    },
+    "hubVNetName": {
+      "value": "vnet-test-eus2-hub"
+    },
+    "spokeVnetId": {
+      "value": "/subscriptions/8b82fc4d-aabe-4658-88f2-5674bf49eec0/resourceGroups/rg-chatjpt-spoke-test-eus2/providers/Microsoft.Network/virtualNetworks/vnet-chatjpt-test-eus2-spoke"
+    },
+    "spokeVnetName": {
+      "value": "vnet-chatjpt-test-eus2-spoke"
+    },
+   
+    "formRecognizerSkuName": {
+      "value": "S0"
+    },
+    "searchIndexName": {
+      "value": "gptkbindex"
+    },
+    "searchServiceSkuName": {
+      "value": "standard"
+    },
+    "storageContainerName": {
+      "value": "content"
+    },
+    "storageSkuName": {
+      "value": "Standard_LRS"
+    },
+    "chatGptDeploymentName": {
+      "value": "chat"
+    },
+    "chatGptDeploymentCapacity": {
+      "value": 30
+    },
+    "chatGptModelName": {
+      "value": "gpt-35-turbo"
+    },
+    "chatGptModelVersion": {
+      "value": "0613"
+    },
+    "embeddingDeploymentName": {
+      "value": "embedding"
+    },
+    "embeddingDeploymentCapacity": {
+      "value": 60
+    },
+    "embeddingModelName": {
+      "value": "text-embedding-ada-002"
+    },
+    "serviceBusSkuName": {
+      "value": "Standard"
+    },
+    "queueName": {
+      "value": "documents-queue"
+    }
+  }
+}

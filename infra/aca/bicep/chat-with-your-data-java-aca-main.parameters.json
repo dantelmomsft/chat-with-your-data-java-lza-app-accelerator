@@ -1,0 +1,124 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    
+    "workloadName": {
+      "value": "jptjava2"
+    },
+    "environment": {
+      "value": "${AZURE_ENV_NAME}"
+    },
+    "location":{
+      "value": "${AZURE_LOCATION}"
+    },
+    "tags": {
+        "value": {}
+    },
+    "enableTelemetry": {
+      "value": true
+    },
+    "hubVnetAddressPrefixes": {
+        "value":  ["10.0.0.0/24"]
+    },
+    "enableBastion": {
+        "value": true
+    },
+    "gatewaySubnetAddressPrefix": {
+      "value": "10.0.0.0/27"
+    },
+    "azureFirewallSubnetAddressPrefix": {
+      "value": "10.0.0.64/26"
+    },
+    "azureFirewallSubnetManagementAddressPrefix": {
+      "value": "10.0.0.128/26"
+    },
+    "bastionSubnetAddressPrefix": {
+      "value": "10.0.0.192/26"
+    },
+    "vmSize": {
+        "value": "Standard_B2ms"
+    },
+    "vmAdminUsername": {
+        "value": "azureuser"
+    },
+    "vmAdminPassword": {
+        "value": "Password123"
+    },
+    "vmLinuxSshAuthorizedKeys": {
+        "value":  "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDpNpoh248rsraL3uejAwKlla+pHaDLbp4DM7bKFoc3Rt1DeXPs0XTutJcNtq4iRq+ooRQ1T7WaK42MfQQxt3qkXwjyv8lPJ4v7aElWkAbxZIRYVYmQVxxwfw+zyB1rFdaCQD/kISg/zXxCWw+gdds4rEy7eq23/bXFM0l7pNvbAULIB6ZY7MRpC304lIAJusuZC59iwvjT3dWsDNWifA1SJtgr39yaxB9Fb01UdacwJNuvfGC35GNYH0VJ56c+iCFeAnMXIT00cYuHf0FCRTP0WvTKl+PQmeD1pwxefdFvKCVpidU2hOARb4ooapT0SDM1SODqjaZ/qwWP18y/qQ/v imported-openssh-key"
+    },
+    "vmJumpboxOSType": {
+        "value": "windows"
+    },
+    "vmJumpBoxSubnetAddressPrefix": {
+        "value":  "10.1.2.32/27"
+    },
+    "spokeVNetAddressPrefixes": {
+      "value":  ["10.1.0.0/22"]
+    },
+    "spokeInfraSubnetAddressPrefix": {
+      "value":  "10.1.0.0/23"
+    },
+    "spokePrivateEndpointsSubnetAddressPrefix": {
+      "value":  "10.1.2.0/27"
+    },
+    "spokeApplicationGatewaySubnetAddressPrefix": {
+      "value":  "10.1.3.0/24"
+    },
+    "enableApplicationInsights": {
+      "value": true
+    },
+    "applicationGatewayFqdn": {
+      "value": "acahello.demoapp.com"
+    },
+    "ddosProtectionMode": {
+      "value": "Enabled"
+    },
+    "enableApplicationGatewayCertificate": {
+      "value": true
+    },
+    "applicationGatewayCertificateKeyName": {
+      "value": "agwcert"
+    },
+    "deployAzurePolicies": {
+      "value": true
+    },
+    "deployZoneRedundantResources": {
+      "value": true
+    },
+
+    
+    "userPrincipalId": {
+      "value": "${AZURE_PRINCIPAL_ID}"
+    },
+    "formRecognizerSkuName": {
+      "value": "S0"
+    },
+    "searchIndexName": {
+      "value": "${AZURE_SEARCH_INDEX=gptkbindex}"
+    },
+    "searchServiceSkuName": {
+      "value": "${AZURE_SEARCH_SERVICE_SKU=standard}"
+    },
+    "searchQueryLanguage": {
+      "value": "${AZURE_SEARCH_QUERY_LANGUAGE=en-us}"
+    },
+    "searchQuerySpeller": {
+      "value": "${AZURE_SEARCH_QUERY_SPELLER=lexicon}"
+    },
+    "storageSkuName": {
+      "value": "${AZURE_STORAGE_SKU=Standard_LRS}"
+    },
+    "chatGptDeploymentName": {
+      "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT=chat}"
+    },
+    "chatGptDeploymentCapacity": {
+      "value": 80
+    },
+    "embeddingDeploymentName": {
+      "value": "${AZURE_OPENAI_EMB_DEPLOYMENT=embedding}"
+    }
+
+  }
+}

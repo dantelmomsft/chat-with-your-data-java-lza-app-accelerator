@@ -1,0 +1,40 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    // The name of the workload that is being deployed. Up to 10 characters long. This wil be used as part of the naming convention (i.e. as defined here: https://learn.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/resource-naming) 
+    "workloadName": {
+      "value": "lzaaca"
+    },
+    //The name of the environment (e.g. "dev", "test", "prod", "preprod", "staging", "uat", "dr", "qa"). Up to 8 characters long.
+    "environment": {
+      "value": "dev"
+    },
+    "tags": {
+        "value": {}
+    },
+    // if true Azure Cache for Redis (Premium SKU), together with Private Endpoint and the relavant Private DNS Zone will be deployed
+    "deployRedisCache": {
+      "value": false
+    },
+    // Replace with the resource ID of the spoke virtual network 
+    "spokeVNetId": {
+        "value": "<SPOKE_VNET_RESOURCE_ID>"
+    },
+    // Optional. Resource ID of the diagnostic log analytics workspace. If left empty, no diagnostics settings will be defined. 
+    "logAnalyticsWorkspaceId": {
+      "value": ""
+    },
+    // Replace with the resource ID of the hub virtual network - required to link the privateDNS zone to the Hub network as well 
+    "hubVNetId": {
+      "value": "<HUB_VNET_RESOURCE_ID>"
+    },
+    "spokePrivateEndpointSubnetName": {
+      "value": "snet-pep"
+    },
+    // Deploy (or not) an Azure OpenAI account. ATTENTION: At the time of writing , OpenAI is in preview and only available in limited regions: look here: https://learn.microsoft.com/azure/ai-services/openai/chatgpt-quickstart#prerequisites
+    "deployOpenAi": {
+      "value": true
+    }
+  }
+}
