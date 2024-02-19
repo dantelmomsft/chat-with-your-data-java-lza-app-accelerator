@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
+
+name: chat-with-your-data-java-aca-lza-app-accelerator
+metadata:
+  template: chat-with-your-data-java-aca-lza-app-accelerator@0.0.1-snapshot
+infra:
+  path: bicep
+  module: chat-with-your-data-java-aca-main
+hooks:
+    preprovision:
+        posix:
+          shell: sh
+          run: ./scripts/download-aca-internal-lza.sh --branch feat/openai-chat-java
+          interactive: true
+          continueOnError: false
+        windows:
+          shell: pwsh
+          run: ./scripts/download-aca-internal-lza.ps1 -branch feat/openai-chat-java
+          interactive: true
+          continueOnError: false 
+    postrestore:
+        windows:
+          shell: pwsh
+          run: cd ../../app/src/azure-search-openai-demo-java/; ./scripts/prepdocs.ps1; cd ../..
+          interactive: true
+          continueOnError: false
+        posix:
+          shell: sh
+          run: cd ../../app/src/azure-search-openai-demo-java/; ./scripts/prepdocs.sh; cd ../..
+          interactive: true
+          continueOnError: false
