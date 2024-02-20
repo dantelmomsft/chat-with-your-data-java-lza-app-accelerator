@@ -221,6 +221,7 @@ var containerRegistryName = acaLza.outputs.containerRegistryName
 var openAIAccountName = acaLza.outputs.openAIAccountName
 
 
+
 module installBuildDependencies 'modules/vm/install-build-depedencies.bicep' = {
   name: 'install-build-dependencies-deployment'
   scope: resourceGroup(spokeResourceGroupName)
@@ -230,7 +231,6 @@ module installBuildDependencies 'modules/vm/install-build-depedencies.bicep' = {
   }
   
 }
-
 
 module appDepedencies 'modules/app-dependencies.bicep' = {
   name: 'app-depedencies-deployment'

@@ -22,7 +22,7 @@ module app '../host/container-app-upsert.bicep' = {
     location: location
     tags: union(tags, { 'azd-service-name': serviceName })
     identityType: 'UserAssigned'
-    identityName: identityName
+    identityName: webIdentity.name
     exists: exists
     containerAppsEnvironmentName: containerAppsEnvironmentName
     containerRegistryName: containerRegistryName

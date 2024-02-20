@@ -16,7 +16,7 @@ resource installDependencies 'Microsoft.Compute/virtualMachines/runCommands@2022
   location: location
   properties: {
     source: {
-      scriptUri: 'https://raw.githubusercontent.com/Azure/aca-landing-zone-accelerator/aca-lza/infra/aca/bicep/modules/vm/jumpbox-tools-setup.ps1'
+      scriptUri: 'https://raw.githubusercontent.com/dantelmomsft/chat-with-your-data-java-lza-app-accelerator/aca-lza/infra/aca/bicep/modules/vm/jumpbox-tools-setup.sh'
     }
   }
 }

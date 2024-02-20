@@ -4,7 +4,7 @@
   "parameters": {
     
     "workloadName": {
-      "value": "jptjava2"
+      "value": "jptjava3"
     },
     "environment": {
       "value": "${AZURE_ENV_NAME}"
@@ -46,10 +46,10 @@
         "value": "Password123"
     },
     "vmLinuxSshAuthorizedKeys": {
-        "value":  "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDpNpoh248rsraL3uejAwKlla+pHaDLbp4DM7bKFoc3Rt1DeXPs0XTutJcNtq4iRq+ooRQ1T7WaK42MfQQxt3qkXwjyv8lPJ4v7aElWkAbxZIRYVYmQVxxwfw+zyB1rFdaCQD/kISg/zXxCWw+gdds4rEy7eq23/bXFM0l7pNvbAULIB6ZY7MRpC304lIAJusuZC59iwvjT3dWsDNWifA1SJtgr39yaxB9Fb01UdacwJNuvfGC35GNYH0VJ56c+iCFeAnMXIT00cYuHf0FCRTP0WvTKl+PQmeD1pwxefdFvKCVpidU2hOARb4ooapT0SDM1SODqjaZ/qwWP18y/qQ/v imported-openssh-key"
+        "value":  "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDDrPvXOs+Kmw/dsCDbcCGwJGKLfvFbYoZ1KG1tjhu+qJbxYEu/dcSDnytrt8v/ie/MIcdE1zZQvOSQ1jCQxaJuHHmXBQRgUL+mNQrh9o7A5Asfwq8rJTV+EgF/ONDAXEI9puNUEeKTA4ST5ISqB9Mn9JtU+lIM4zDCAtv7Eyi3s5NRmEMRi+wHrnHHRzX9Youfzq1PEOvX0ztWpuczR+c0VYAMRLI6kUWxraOMPusLh28IrFdscJ3CBRosFqJTE4ktufDxuYjuJ5ItRp9i/XtQZoVd4PDTI+pl1gYL4s8Aupo18kgBzuhJhCaQUfRrWh7N9oYQ6H5tNq2V/E1ByQVpeoygLJdqjABNz66Htq1Hw0tKSC4uPx/1Gw/eLzMhgo5tzw3JSc9LgGsIFKd6WWaQvs3P7G/kTGPdcwxlY/BdTefqtns11opD71Db5lzDK9F/a6rhZFT0ddFsi9Mr6qn/v45R6wxFzNaEYfunG/9XnANlC7KI/Mk0dTZon3kOFf9moPYR9WLrjQtfFicm2qOMHQyWqYFzFMRYVpweTUZrYnqhJ1gw1lot8mArg+izauDcFHy30HRF55r03CTKn1Rt0AUt21bSZ+IK7jgqnmUOo/3aN9bVN5A+HOLqfL+K6WcYNuhlFbsPGNCsqsVdXGc01yciDZv0mEG9afdAj8SDKw== dantelmo@LAPTOP-DANTELMO"
     },
     "vmJumpboxOSType": {
-        "value": "windows"
+        "value": "linux"
     },
     "vmJumpBoxSubnetAddressPrefix": {
         "value":  "10.1.2.32/27"

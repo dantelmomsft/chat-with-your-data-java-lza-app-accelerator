@@ -1,7 +1,7 @@
 # Landing Zones Code
 infra/app-service/bicep/lza-libs/appservice-landing-zone-accelerator
 infra/app-service/terraform/lza-libs/appservice-landing-zone-accelerator
-
+*lza-libs*
 # App Code
 app/src/azure-search-openai-demo-java
 # Azure az webapp deployment details
