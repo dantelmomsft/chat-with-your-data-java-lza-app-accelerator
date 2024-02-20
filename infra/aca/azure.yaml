@@ -6,6 +6,21 @@ metadata:
 infra:
   path: bicep
   module: chat-with-your-data-java-aca-main
+services:
+  api:
+    project: ../../app/src/azure-search-openai-demo-java/app/backend
+    language: java
+    host: containerapp
+  indexer:
+    project: ../../app/src/azure-search-openai-demo-java/app/indexer
+    language: java
+    host: containerapp
+    docker:
+      path: ./microservice/Dockerfile
+  web:
+    project: ../../app/src/azure-search-openai-demo-java/app/frontend
+    language: js
+    host: containerapp
 hooks:
     preprovision:
         posix:
@@ -21,11 +36,11 @@ hooks:
     postrestore:
         windows:
           shell: pwsh
-          run: cd ../../app/src/azure-search-openai-demo-java/; ./scripts/prepdocs.ps1; cd ../..
+          run: cd ../../app/src/azure-search-openai-demo-java/deploy/aca; ./scripts/prepdocs.ps1; cd ../..
           interactive: true
           continueOnError: false
         posix:
           shell: sh
-          run: cd ../../app/src/azure-search-openai-demo-java/; ./scripts/prepdocs.sh; cd ../..
+          run: cd ../../app/src/azure-search-openai-demo-java/deploy/aca; ./scripts/prepdocs.sh; cd ../..
           interactive: true
           continueOnError: false

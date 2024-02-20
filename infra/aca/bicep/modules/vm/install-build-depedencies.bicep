@@ -15,6 +15,7 @@ resource installDependencies 'Microsoft.Compute/virtualMachines/runCommands@2022
   name: 'installJavaDependencies'
   location: location
   properties: {
+    runAsUser:'azureuser'
     source: {
       scriptUri: 'https://raw.githubusercontent.com/dantelmomsft/chat-with-your-data-java-lza-app-accelerator/aca-lza/infra/aca/bicep/modules/vm/jumpbox-tools-setup.sh'
     }
