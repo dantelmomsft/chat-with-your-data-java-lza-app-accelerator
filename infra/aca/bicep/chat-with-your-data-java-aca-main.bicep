@@ -349,3 +349,7 @@ output AZURE_STORAGE_ACCOUNT string = appDepedencies.outputs.azureStorageAccount
 output AZURE_STORAGE_CONTAINER string = storageContainerName
 output AZURE_STORAGE_RESOURCE_GROUP string = spokeResourceGroupName
 
+
+output AZURE_CONTAINER_ENVIRONMENT_NAME string = acaLza.outputs.containerAppsEnvironmentName
+output AZURE_CONTAINER_REGISTRY_ENDPOINT string = acaLza.outputs.containerRegistryLoginServer
+output AZURE_CONTAINER_REGISTRY_NAME string = acaLza.outputs.containerRegistryName
