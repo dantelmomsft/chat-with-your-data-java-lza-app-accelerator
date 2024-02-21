@@ -281,6 +281,7 @@ module azureStorageNetworking '../lza-libs/aca-landing-zone-accelerator/scenario
     location: location
     tags: tags
     publicNetworkAccess: 'Disabled'
+    allowTrustedServicesAccess: true //required to receive events from Event Grid
     workspaceId:logAnalyticsWsId
     queueNames: [ queueName ]
     lockDuration: 'PT3M'

@@ -164,6 +164,7 @@ module acaLza 'lza-libs/aca-landing-zone-accelerator/scenarios/aca-internal/bice
     azureFirewallSubnetAddressPrefix:azureFirewallSubnetAddressPrefix
     azureFirewallSubnetManagementAddressPrefix:azureFirewallSubnetManagementAddressPrefix
     enableBastion:enableBastion
+    bastionSku: 'Standard'
     bastionSubnetAddressPrefix:bastionSubnetAddressPrefix
 
     spokeVNetAddressPrefixes:spokeVNetAddressPrefixes
@@ -299,8 +300,7 @@ module apps 'modules/apps.bicep' = {
 
 }
 
-/* Expose web frontend 
-
+ //Expose web frontend 
 module applicationGateway 'lza-libs/aca-landing-zone-accelerator/scenarios/aca-internal/bicep/modules/06-application-gateway/deploy.app-gateway.bicep' =  {
   name: take('applicationGateway-${deployment().name}-deployment', 64)
   scope: resourceGroup(spokeResourceGroupName)
@@ -321,7 +321,6 @@ module applicationGateway 'lza-libs/aca-landing-zone-accelerator/scenarios/aca-i
   }
 }
 
-*/
 
 
 output AZURE_RESOURCE_GROUP string = spokeResourceGroupName

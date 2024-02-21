@@ -22,6 +22,7 @@ resource storage 'Microsoft.Storage/storageAccounts@2021-09-01' existing = {
   name: storageAccountName
 }
 
+//Enabling Service Bus subscription for Event Grid on a secure connection: https://learn.microsoft.com/en-us/azure/event-grid/consume-private-endpoints
 resource eventgridSystemTopic 'Microsoft.EventGrid/systemTopics@2023-12-15-preview' = {
   name: systemTopicName
   location: location
@@ -29,17 +30,36 @@ resource eventgridSystemTopic 'Microsoft.EventGrid/systemTopics@2023-12-15-previ
     source: storage.id
     topicType: 'Microsoft.Storage.StorageAccounts'
   }
+  identity: {
+    type: 'SystemAssigned'
+  }
+}
+
+var azureServiceBusDataSender= '69a216fc-b8fb-44d8-bc22-1f3c2cd27a39'
+module serviceBusEventrGridDataSenderRoleAssignment '../../lza-libs/aca-landing-zone-accelerator/scenarios/shared/bicep/role-assignments/role-assignment.bicep' = {
+  name: take('serviceBusEventrGridDataSenderDeployment-${deployment().name}', 64)
+  params: {
+    name: 'ra-serviceBusEventrGridDataSender'
+    principalId: eventgridSystemTopic.identity.principalId
+    resourceId: serviceBusNamespace.id
+    roleDefinitionId: azureServiceBusDataSender
+  }
 }
 
 resource serviceBusEventGridSubscription 'Microsoft.EventGrid/systemTopics/eventSubscriptions@2023-12-15-preview' = {
   parent: eventgridSystemTopic
   name: subscriptionName
   properties: {
-    destination: {
-      properties: {
-        resourceId: queue.id
+    deliveryWithResourceIdentity :{
+       identity: {
+        type: 'SystemAssigned'
       }
-      endpointType: 'ServiceBusQueue'
+      destination: {
+        properties: {
+          resourceId: queue.id
+        }
+        endpointType: 'ServiceBusQueue'
+      }
     }
     filter: {
       
@@ -56,7 +76,9 @@ resource serviceBusEventGridSubscription 'Microsoft.EventGrid/systemTopics/event
       eventTimeToLiveInMinutes: 1440
     }
   }
-}
+  dependsOn: [serviceBusEventrGridDataSenderRoleAssignment]
+} 
+
 
 
 

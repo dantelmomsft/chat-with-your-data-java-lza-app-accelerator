@@ -57,6 +57,6 @@ sudo ln -s /opt/apache-maven-3.8.8 /opt/maven -s
 echo "export JAVA_HOME=/usr/lib/jvm/msopenjdk-17-amd64" >> ~/.bashrc
 echo "export M2_HOME=/opt/maven" >> ~/.bashrc
 echo "export MAVEN_HOME=/opt/maven" >> ~/.bashrc
-echo "export PATH=${M2_HOME}/bin:${PATH}" >> ~/.bashrc
+echo "export PATH=/opt/maven:/bin:${PATH}" >> ~/.bashrc
 
 source ~/.bashrc
