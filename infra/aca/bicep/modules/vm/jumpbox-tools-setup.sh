@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Script Definition
-logpath=/var/log/deploymentscriptlog
+logpath=~/jumpbos-tools-setup.log
 
 # Upgrading Linux Distribution
 echo "#############################" >> $logpath
