@@ -114,7 +114,7 @@
       "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT=chat}"
     },
     "chatGptDeploymentCapacity": {
-      "value": 80
+      "value": 60
     },
     "embeddingDeploymentName": {
       "value": "${AZURE_OPENAI_EMB_DEPLOYMENT=embedding}"
