@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Script Definition
-logpath=~/jumpbos-tools-setup.log
+logpath=~/jumpbox-tools-setup.log
 
 # Upgrading Linux Distribution
 echo "#############################" >> $logpath
@@ -41,7 +41,7 @@ echo "#############################" >> $logpath
 ubuntu_release=`lsb_release -rs`
 wget https://packages.microsoft.com/config/ubuntu/${ubuntu_release}/packages-microsoft-prod.deb -O packages-microsoft-prod.deb >> $logpath
 sudo dpkg -i packages-microsoft-prod.deb >> $logpath
-rm packages-microsoft-prod.deb
+#rm packages-microsoft-prod.deb
 sudo apt-get install apt-transport-https >> $logpath
 sudo apt-get update >> $logpath
 sudo apt-get install msopenjdk-17 -y >> $logpath
@@ -57,6 +57,6 @@ sudo ln -s /opt/apache-maven-3.8.8 /opt/maven -s
 echo "export JAVA_HOME=/usr/lib/jvm/msopenjdk-17-amd64" >> ~/.bashrc
 echo "export M2_HOME=/opt/maven" >> ~/.bashrc
 echo "export MAVEN_HOME=/opt/maven" >> ~/.bashrc
-echo "export PATH=/opt/maven:/bin:${PATH}" >> ~/.bashrc
+echo "export PATH=/opt/maven/bin:${PATH}" >> ~/.bashrc
 
 source ~/.bashrc
