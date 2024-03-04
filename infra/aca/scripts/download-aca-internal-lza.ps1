@@ -18,7 +18,7 @@ if (-not (Test-Path './bicep/lza-libs/aca-landing-zone-accelerator')) {
         Write-Host "Downloading ACA Internal Secure Scenario from branch: https://api.github.com/repos/Azure/aca-landing-zone-accelerator/tarball/$branch"
         Invoke-WebRequest -Uri "https://api.github.com/repos/Azure/aca-landing-zone-accelerator/tarball/$branch" -OutFile 'aca-landing-zone-accelerator.tar.gz'
         # Extract only the required folders
-        tar -xf aca-landing-zone-accelerator.tar.gz 'Azure-aca-landing-zone-accelerator*/scenarios/aca-intenal/bicep'
+        tar -xf aca-landing-zone-accelerator.tar.gz 'Azure-aca-landing-zone-accelerator*/scenarios/aca-internal/bicep'
         tar -xf aca-landing-zone-accelerator.tar.gz 'Azure-aca-landing-zone-accelerator*/scenarios/shared/bicep'
     }
     
