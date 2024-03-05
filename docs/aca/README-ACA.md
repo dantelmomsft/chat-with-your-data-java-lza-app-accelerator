@@ -1,7 +1,5 @@
 # Deploy Azure Open AI Java reference template on Azure Container Apps production ready environment using ACA LZA
 
-## Deployment Architecture
-
 ![Deployment Architecture](aca-internal-java-ai.png)
 
 ## Getting Started
@@ -21,8 +19,8 @@
    - You can use a ssh native client command from your local terminal. Info [here](https://learn.microsoft.com/en-us/azure/bastion/connect-vm-native-client-windows#connect-linux)
 2. Run `cd chat-with-your-data-java-lza-app-accelerator` 
 3. To download the the chat-with-your-data-java [source code ](https://github.com/Azure-Samples/azure-search-openai-demo-java) run:
-    - *Windows Power Shell* - `.\scripts\download-app-source.ps1 -branch main` 
-    - *Linux/Windows WSL* - `./scripts/download-app-source.sh --branch main`.
+    - *Windows Power Shell* - `.\scripts\download-app-source.ps1 -branch aca` 
+    - *Linux/Windows WSL* - `./scripts/download-app-source.sh --branch aca`.
 4. Run `cd chat-with-your-data-java-lza-app-accelerator/infra/aca` and copy here the `chat-with-your-data-java-lza-app-accelerator\infra\aca\.azure` local folder that has been created on your laptop at the end of [Deploy Infrastructure](#deploy-the-infrastructure) phase.
     - You can use a scp command from your local terminal. Info [here](https://learn.microsoft.com/en-us/azure/bastion/vm-upload-download-native#tunnel-command)    
 5. Run `azd auth login`
