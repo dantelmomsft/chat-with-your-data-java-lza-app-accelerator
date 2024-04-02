@@ -4,7 +4,7 @@
   "parameters": {
     
     "workloadName": {
-      "value": "jptjava6"
+      "value": "aichatj"
     },
     "environment": {
       "value": "${AZURE_ENV_NAME}"
